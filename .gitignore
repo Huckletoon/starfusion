@@ -1,5 +1,8 @@
 #environment vars
 .env
 
+#pycache
+__pycache__
+
 #batch
 *.bat
