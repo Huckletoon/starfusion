@@ -211,8 +211,14 @@ class MyClient(discord.Client):
 		if sessionData[message.author.id]['state'] == 5:
 			#TODO
 			if (message.content == '!next'):
-				if sessionData[message.author.id]['substate'] = 
-			
+				if sessionData[message.author.id]['substate'] >= 4:
+					return
+				elif sessionData[message.author.id]['substate'] >= 2:
+					return
+				elif sessionData[message.author.id]['substate'] == 1:
+					return
+				elif sessionData[message.author.id]['substate'] == 0:
+					return
 			return
 		
 		if sessionData[message.author.id]['state'] == 6:
