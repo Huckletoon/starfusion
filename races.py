@@ -1,6 +1,33 @@
 races = {'android', 'dwarf', 'elf', 'gnome', 'half-elf', 'half-orc', 'halfling', 'human', 'kasatha', 'lashunta', 'shirren', 'vesk', 'ysoki'}
 racesWithAbilityChoices = {'gnome', 'half-elf', 'half-orc', 'human', 'lashunta'}
+raceAbilityAdjustments = {
+	'android': {
+		'maxhp':4,
+		'dexterity':2,
+		'intelligence':2,
+		'charisma':-2},
+	'dwarf': {
+		'maxhp':6,
+		'constitution':2,
+		'wisdom':2,
+		'charisma':-2},
+	'elf': {
+		'maxhp':4,
+		'dexterity':2,
+		'intelligence':2,
+		'constitution':-2},
+	'gnome': {
+		'maxhp':4,
+		'wisdom':2,
+		'strength':-2}
+	
 
+}
+
+#Params
+#	string: character's race
+#Returns 
+#	string: bot's message text describing the race's stat adjustments and traits
 def getRaceOverview(race):
 	if race.lower() == 'android':
 		return '''***==Android==***
@@ -297,9 +324,79 @@ Ysoki receive a +2 racial bonus to Engineering, Stealth, and Survival checks.
 		return 'Invalid race'
 
 
-
+#Params
+#	string: player's race selection
+#Returns
+#	bool: true if the race selection is valid/in the list of races
 def isValid(race):
 	return race.lower() in races
 	
+#Params
+#	string: character's race
+#Returns
+#	bool: true if the race selected requires further choices to determine ability scores
 def needsChoices(race):
 	return race.lower() in racesWithAbilityChoices
+
+#Params
+#	string: character's race 
+#Returns
+#	string: bot's message text describing the available choices for racial ability score adjustments and how to proceed
+def getChoices(race):
+	if race.lower() == 'gnome':
+		return '''As a Gnome, you have two choices:
+
+**Feychild**
+    +2 Charisma
+	Sporting brightly colored skin and hair, feychildren cling to their pre-Gap heritage and are abound with wild whimsy and a ravenous, reckless appetite for adventure.
+	
+**Bleachling**
+	+2 Intelligence
+	Believed to be the descendants of those who survived the plague known as the Bleaching, a Bleachling's features are typically monochromatic, ranging from black and white to brown and gray. They have a reputation of being even-tempered and rather dour.
+	
+To make your choice, type ***!feychild*** or ***!bleachling***
+	'''
+	elif race.lower() == 'half-elf':
+		return '''As a Half-Elf, you may increase any ability score by 2.
+
+To make your choice type ***!{Ability}*** (for example, ***!wisdom*** or ***!dexterity***)		
+		'''
+	elif race.lower() == 'half-orc':
+		return '''As a Half-Orc, you may increase any ability score by 2.
+
+To make your choice type ***!{Ability}*** (for example, ***!wisdom*** or ***!dexterity***)		
+		'''
+	elif race.lower() == 'human':
+		return '''As a Human, you may increase any ability score by 2.
+
+To make your choice type ***!{Ability}*** (for example, ***!wisdom*** or ***!dexterity***)		
+		'''
+	elif race.lower() == 'lashunta':
+		return '''As a Lashunta, you have two choices:
+		
+**Korasha**
+	+2 Strength
+	-2 Wisdom
+	Korasha Lashuntas are muscular, but often brash and unobservant.
+
+**Damaya**
+	+2 Intelligence
+	-2 Constitution
+	Damaya Lashuntas are typically clever and well-spoken, but somewhat delicate.
+
+To make your choice, type ***!korasha*** or ***!damaya***
+		'''
+	else:
+		return race + ' does not require any ability score choices'
+		
+#Overload: Race does not need choices for ability scores
+def getAbilityScoreAdjustments(race):
+	return raceAbilityAdjustments[race.lower()]
+#Overload: Race does need a choice for ability scores
+def getAbilityScoreAdjustments(race, choice):
+	return
+		
+	
+	
+	
+	
