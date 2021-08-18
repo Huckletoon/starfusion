@@ -1,5 +1,11 @@
 classes = {'envoy', 'mechanic', 'mystic', 'operative', 'solarian', 'soldier', 'technomancer'}
 classesWithAbilityChoices = {'soldier'}
+classChoices = {
+	'soldier': [
+		'strength',
+		'dexterity'
+	]
+}
 
 def getClassOverview(classChoice):
 	if classChoice.lower() == 'envoy':
@@ -77,6 +83,7 @@ You understand that what most people call magic is simply an expression of the i
 **Saving Throws:** +0 Fortitude, +0 Reflex, +2 Will
 **Base Attack Bonus:** +0''',
 '''***==Class Features==***
+
 ''']
 	if classChoice.lower() == 'operative':
 		return ['''***==Operative==*** https://www.starjammersrd.com/classes/operative/
@@ -93,6 +100,7 @@ You’re a shadow. You move swiftly, strike suddenly, and always have an escape 
 **Saving Throws:** +0 Fortitude, +2 Reflex, +2 Will
 **Base Attack Bonus:** +0''',
 '''***==Class Features==***
+
 ''']
 	if classChoice.lower() == 'solarian':
 		return ['''***==Solarian==*** https://www.starjammersrd.com/classes/solarian/
@@ -109,6 +117,7 @@ The stars guide the planets with gravity, create life with light and heat, and u
 **Saving Throws:** +2 Fortitude, +0 Reflex, +2 Will
 **Base Attack Bonus:** +1''',
 '''***==Class Features==***
+
 ''']
 	if classChoice.lower() == 'soldier':
 		return ['''***==Soldier==*** https://www.starjammersrd.com/classes/soldier/
@@ -125,6 +134,7 @@ Conflict is an inevitable result of life. On every world that harbors complex li
 **Saving Throws:** +2 Fortitude, +0 Reflex, +2 Will
 **Base Attack Bonus:** +1''',
 '''***==Class Features==***
+
 ''']
 	if classChoice.lower() == 'technomancer':
 		return ['''***==Technomancer==*** https://www.starjammersrd.com/classes/technomancer/
@@ -141,6 +151,7 @@ To the uninitiated, magic and technology are completely unrelated, but you know 
 **Saving Throws:** +0 Fortitude, +2 Reflex, +2 Will
 **Base Attack Bonus:** +0''',
 '''***==Class Features==***
+
 ''']
 	
 	
@@ -149,3 +160,12 @@ def isValid(classChoice):
 	
 def needsChoices(classChoice):
 	return classChoice.lower() in classesWithAbilityChoices
+
+def isValidChoice(classChoice, choice):
+	return classChoice.lower() in classesWithAbilityChoices and choice in classChoices[classChoice.lower()]
+
+def getChoices(classChoice):
+	if classChoice.lower() == 'soldier':
+		return '''As a Soldier, you have the choice of your Key Ability Score being either Strength or Dexterity. This should be the ability you plan to have the most points in.
+		
+To make your choice type ***!strength*** or ***!dexterity***'''

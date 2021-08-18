@@ -1,5 +1,26 @@
 themes = {'ace pilot', 'bounty hunter', 'icon', 'mercenary', 'outlaw', 'priest', 'scholar', 'spacefarer', 'xenoseeker', 'themeless'}
 themesWithAbilityChoices = {'themeless'}
+themeAbilityAdjustments = {
+	'ace pilot': {'dexterity':1},
+	'bounty hunter': {'constitution':1},
+	'icon': {'charisma':1},
+	'mercenary': {'strength':1},
+	'outlaw': {'dexterity':1},
+	'priest': {'wisdom':1},
+	'scholar': {'intelligence':1},
+	'spacefarer': {'constitution':1},
+	'xenoseeker': {'charisma':1},
+	'themeless': {
+		'strength':1,
+		'dexterity':1,
+		'constitution':1,
+		'wisdom':1,
+		'intelligence':1,
+		'charisma':1
+	}
+}
+
+
 
 def getThemeOverview(theme):
 	if theme.lower() == 'ace pilot':
@@ -213,3 +234,24 @@ def isValid(theme):
 	
 def needsChoices(theme):
 	return theme.lower() in themesWithAbilityChoices
+	
+def isValidChoice(theme, choice):
+	return theme.lower() in themesWithAbilityChoices and choice.lower() in themeAbilityAdjustments[theme.lower()]
+
+def getChoices(theme):
+	if theme.lower() == 'themeless':
+		return '''As a Themeless character, you may increase any ability score by 1.
+
+To make your choice type ***!{Ability}*** (for example, ***!wisdom*** or ***!dexterity***)'''
+
+#overload
+#theme does not require further choice
+#Returns: dict of stat adjustment
+def getAbilityScoreAdjustments(theme):
+	return themeAbilityAdjustments[theme.lower()]
+	
+#overload
+#theme requires further choice
+#Returns: singular stat adjustment
+def getAbilityScoreAdjustmentsChoice(theme, choice):
+	return themeAbilityAdjustments[theme.lower()][choice.lower()]

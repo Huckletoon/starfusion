@@ -19,10 +19,109 @@ raceAbilityAdjustments = {
 	'gnome': {
 		'maxhp':4,
 		'wisdom':2,
-		'strength':-2}
-	
-
+		'strength':-2},
+	'lashunta': {
+		'maxhp':4,
+		'charisma':2
+	},
+	'half-elf': {
+		'maxhp': 4
+	},
+	'half-orc': {
+		'maxhp': 6
+	},
+	'human': {
+		'maxhp': 4
+	},
+	'halfling': {
+		'maxhp': 2,
+		'dexterity':2,
+		'charisma':2,
+		'strength':-2
+	},
+	'shirren': {
+		'maxhp':6,
+		'constitution':2,
+		'wisdom':2,
+		'charisma':-2
+	},
+	'kasatha': {
+		'maxhp':4,
+		'strength':2,
+		'wisdom':2,
+		'intelligence':-2
+	},
+	'vesk': {
+		'maxhp':6,
+		'strength':2,
+		'constitution':2,
+		'intelligence':-2
+	},
+	'ysoki': {
+		'maxhp':2,
+		'dexterity':2,
+		'intelligence':2,
+		'strength':-2
+	}
 }
+validChoices = {
+	'gnome': {
+		'feychild': {
+			'charisma': 2
+		},
+		'bleachling': {
+			'intelligence': 2
+		}},
+	'lashunta': {
+		'korasha': {
+			'strength': 2,
+			'wisdom': -2
+		},
+		'damaya': {
+			'intelligence': 2,
+			'constitution': -2
+		}},
+	'half-elf': {
+		'strength': {
+			'strength': 2},
+		'dexterity': {
+			'dexterity': 2},
+		'constitution': {
+			'constitution': 2},
+		'intelligence': {
+			'intelligence': 2},
+		'wisdom': {
+			'wisdom': 2},
+		'charisma': {
+			'charisma': 2}},
+	'half-orc': {
+		'strength': {
+			'strength': 2},
+		'dexterity': {
+			'dexterity': 2},
+		'constitution': {
+			'constitution': 2},
+		'intelligence': {
+			'intelligence': 2},
+		'wisdom': {
+			'wisdom': 2},
+		'charisma': {
+			'charisma': 2}},
+	'human': {
+		'strength': {
+			'strength': 2},
+		'dexterity': {
+			'dexterity': 2},
+		'constitution': {
+			'constitution': 2},
+		'intelligence': {
+			'intelligence': 2},
+		'wisdom': {
+			'wisdom': 2},
+		'charisma': {
+			'charisma': 2}}
+}
+
 
 #Params
 #	string: character's race
@@ -389,14 +488,18 @@ To make your choice, type ***!korasha*** or ***!damaya***
 	else:
 		return race + ' does not require any ability score choices'
 		
-#Overload: Race does not need choices for ability scores
+#Returns
+#	dict containing stat adjustments
 def getAbilityScoreAdjustments(race):
 	return raceAbilityAdjustments[race.lower()]
-#Overload: Race does need a choice for ability scores
-def getAbilityScoreAdjustments(race, choice):
-	return
+def getAbilityScoreAdjustmentsChoice(race, choice):
+	temp = {}
+	temp.update(getAbilityScoreAdjustments(race))
+	temp.update(validChoices[race.lower()][choice.lower()])
+	return temp
 		
-	
-	
-	
-	
+def isValidChoice(race,choice):
+	try:
+		return race.lower() in validChoices and choice.lower() in validChoices[race.lower()]
+	except KeyError:
+		return False

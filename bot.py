@@ -11,10 +11,11 @@ import themes
 load_dotenv()
 sessionData = dict()
 
+'''
 # user states
 # {userid, int}
 # 0 = Base state
-# 1 = Into and Confirmation
+# 1 = Intro and Confirmation
 # 2 = Race
 # 3 = Theme
 # 4 = Class
@@ -27,7 +28,7 @@ sessionData = dict()
 # 11 = Finishing details/touches
 # 12 = Overview and confirm character creation
 # 13 = Character exists
-
+'''
 
 
 class MyClient(discord.Client):
@@ -35,11 +36,14 @@ class MyClient(discord.Client):
 	#on ready
 	async def on_ready(self):
 		print('Logged on as {0}!'.format(self.user))
+		print('Self ID: {0}'.format(self.user.id))
 		
 		#initialize session data for each user
 		for guild in self.guilds:
+			print('Logged into guildID: {0}'.format(guild.id))
 			async for member in guild.fetch_members():
 				if member.id not in sessionData:
+					print('Loading session data for memberID ' + str(member.id) + ' in guildID ' + str(guild.id) + '...')
 					filepath = str(member.id) + '.json'
 					if os.path.exists(filepath):
 						sessionData[member.id] = dict()
@@ -48,16 +52,17 @@ class MyClient(discord.Client):
 						sessionData[member.id]['race'] = '' #TODO: Load from file
 						sessionData[member.id]['theme'] = '' #TODO
 						sessionData[member.id]['class'] = '' #TODO
-						sessionData[member.id]['str'] = 10 #TODO
-						sessionData[member.id]['dex'] = 10 #TODO
-						sessionData[member.id]['con'] = 10 #TODO
-						sessionData[member.id]['int'] = 10 #TODO
-						sessionData[member.id]['wis'] = 10 #TODO
-						sessionData[member.id]['cha'] = 10 #TODO
+						sessionData[member.id]['strength'] = 10 #TODO
+						sessionData[member.id]['dexterity'] = 10 #TODO
+						sessionData[member.id]['constitution'] = 10 #TODO
+						sessionData[member.id]['intelligence'] = 10 #TODO
+						sessionData[member.id]['wisdom'] = 10 #TODO
+						sessionData[member.id]['charisma'] = 10 #TODO
 						sessionData[member.id]['abilitypoints'] = 0
 						sessionData[member.id]['maxresolve'] = 0 #TODO
 						sessionData[member.id]['maxstamina'] = 0 #TODO
 						sessionData[member.id]['maxhp'] = 0 #TODO
+						sessionData[member.id]['keyabilityscore'] = ''
 						
 					else:
 						sessionData[member.id] = dict()
@@ -66,16 +71,17 @@ class MyClient(discord.Client):
 						sessionData[member.id]['race'] = ''
 						sessionData[member.id]['theme'] = ''
 						sessionData[member.id]['class'] = ''
-						sessionData[member.id]['str'] = 10
-						sessionData[member.id]['dex'] = 10
-						sessionData[member.id]['con'] = 10
-						sessionData[member.id]['int'] = 10
-						sessionData[member.id]['wis'] = 10
-						sessionData[member.id]['cha'] = 10
+						sessionData[member.id]['strength'] = 10
+						sessionData[member.id]['dexterity'] = 10
+						sessionData[member.id]['constitution'] = 10
+						sessionData[member.id]['intelligence'] = 10
+						sessionData[member.id]['wisdom'] = 10
+						sessionData[member.id]['charisma'] = 10
 						sessionData[member.id]['abilitypoints'] = 10
 						sessionData[member.id]['maxresolve'] = 0
 						sessionData[member.id]['maxstamina'] = 0
 						sessionData[member.id]['maxhp'] = 0
+						sessionData[member.id]['keyabilityscore'] = ''
 
 	#user sent a message
 	async def on_message(self, message):
@@ -83,47 +89,55 @@ class MyClient(discord.Client):
 		if message.author == self.user:
 			return
 		
+		#Message vars
+		userID = message.author.id
+
 		#DEBUG
 		if message.content == '!members':
 			print(sessionData)
+			return
 		if message.content == '!purge':
 			await message.channel.purge()
+			return
 			
 		#List character options
 		if message.content == '!list race':
 			await message.channel.send(blocksOfText.listRaces())
+			return
 		if message.content == '!list theme':
 			await message.channel.send(blocksOfText.listThemes())
+			return
 		if message.content == '!list class':
 			await message.channel.send(blocksOfText.listClasses())
+			return
 			
 		
 		#Create Character
-		if sessionData[message.author.id]['state'] == 0:
+		if sessionData[userID]['state'] == 0:
 			
 			#Start character creation
 			if message.content == '!create':
 				#check if user already has a file
-				filepath = str(message.author.id) + '.json'
+				filepath = str(userID) + '.json'
 				if os.path.exists(filepath):
 					await message.channel.send('You already have a character!')
-					sessionData[message.author.id]['state'] = 12
+					sessionData[userID]['state'] = 13
 					return
 				
-				sessionData[message.author.id]['state'] = 1
+				sessionData[userID]['state'] = 1
 				await message.channel.send(blocksOfText.introPt1(message.author.name))
 				await message.channel.send(blocksOfText.introPt2())
-				
-		if sessionData[message.author.id]['state'] == 1:
+		#Intro
+		if sessionData[userID]['state'] == 1:
 			if message.content == '!next':
-				sessionData[message.author.id]['state'] = 2
+				sessionData[userID]['state'] = 2
 				await message.channel.send(blocksOfText.racePt1())
 				await message.channel.send(blocksOfText.listRaces())
 				await message.channel.send(blocksOfText.racePt2())
-		
-		if sessionData[message.author.id]['state'] == 2:
+		#Choose Race
+		if sessionData[userID]['state'] == 2:
 			if message.content.startswith('!race '):
-				sessionData[message.author.id]['race'] = message.content[6:]
+				sessionData[userID]['race'] = message.content[6:]
 				race = message.content[6:]
 				
 				if not races.isValid(race):
@@ -134,19 +148,19 @@ class MyClient(discord.Client):
 				await message.channel.send(blocksOfText.racePt3(race))
 				
 			if message.content == '!confirm':
-				if not races.isValid(sessionData[message.author.id]['race']):
+				if not races.isValid(sessionData[userID]['race']):
 					await message.channel.send('You haven\'t chosen a proper race yet!')
 				else:
-					await message.channel.send('You\'ve chosen **\'' + sessionData[message.author.id]['race'] + '\'** as your race!\nIf your racial choice requires further specification for \'sub-race\' (like the different kinds of Lashunta or Gnomes), we\'ll take care of that after a couple more steps.')
-					sessionData[message.author.id]['state'] = 3
+					await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['race'] + '\'** as your race!\nIf your racial choice requires further specification for \'sub-race\' (like the different kinds of Lashunta or Gnomes), we\'ll take care of that after a couple more steps.')
+					sessionData[userID]['state'] = 3
 					await message.channel.send(blocksOfText.themePt1())
 					await message.channel.send(blocksOfText.listThemes())
 					await message.channel.send(blocksOfText.themePt2())
 					return
-		
-		if sessionData[message.author.id]['state'] == 3:
+		#Choose Theme
+		if sessionData[userID]['state'] == 3:
 			if message.content.startswith('!theme '):
-				sessionData[message.author.id]['theme'] = message.content[7:]
+				sessionData[userID]['theme'] = message.content[7:]
 				theme = message.content[7:]
 				
 				if not themes.isValid(theme):
@@ -158,20 +172,20 @@ class MyClient(discord.Client):
 				await message.channel.send(blocksOfText.themePt3(theme))
 				return
 				
-			if message.content == '!confirm':
-				if not themes.isValid(sessionData[message.author.id]['theme']):
+			elif message.content == '!confirm':
+				if not themes.isValid(sessionData[userID]['theme']):
 					await message.channel.send('You haven\'t chosen a proper theme yet!')
 				else:
-					await message.channel.send('You\'ve chosen **\'' + sessionData[message.author.id]['theme'] + '\'** as your theme!\nIf your choice requires further specification (like the specialization of a Scholar), we\'ll take care of that soon!')
-					sessionData[message.author.id]['state'] = 4
+					await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['theme'] + '\'** as your theme!\nIf your choice requires further specification (like the specialization of a Scholar), we\'ll take care of that soon!')
+					sessionData[userID]['state'] = 4
 					await message.channel.send(blocksOfText.classPt1())
 					await message.channel.send(blocksOfText.listClasses())
 					await message.channel.send(blocksOfText.classPt2())
 					return
-		
-		if sessionData[message.author.id]['state'] == 4:
+		#Choose Class
+		if sessionData[userID]['state'] == 4:
 			if message.content.startswith('!class '):
-				sessionData[message.author.id]['class'] = message.content[7:]
+				sessionData[userID]['class'] = message.content[7:]
 				classChoice = message.content[7:]
 				
 				if not classes.isValid(classChoice):
@@ -183,87 +197,130 @@ class MyClient(discord.Client):
 				return
 				
 			if message.content == '!confirm':
-				if not classes.isValid(sessionData[message.author.id]['class']):
+				if not classes.isValid(sessionData[userID]['class']):
 					await message.channel.send('You haven\'t chosen a proper class yet!')
 				else:
-					await message.channel.send('You\'ve chosen**\'' + sessionData[message.author.id]['class'] + '\'** as your class!\nI might have to work with you individually to flesh out your class abilities, but we\'ll cross that bridge when we get there.')
-					sessionData[message.author.id]['state'] = 5
+					await message.channel.send('You\'ve chosen**\'' + sessionData[userID]['class'] + '\'** as your class!\nI might have to work with you individually to flesh out your class abilities, but we\'ll cross that bridge when we get there.')
+					sessionData[userID]['state'] = 5
 					await message.channel.send(blocksOfText.abilityScore())
-					#todo: this, finish filling out classes.py {mystic, operative, solarian, soldier, technomancer}
-					raceBool = races.needsChoices(sessionData[message.author.id]['race'])
-					themeBool = themes.needsChoices(sessionData[message.author.id]['theme'])
-					classBool = classes.needsChoices(sessionData[message.author.id]['class'])
+					#todo: finish filling out classes.py {mystic, operative, solarian, soldier, technomancer}
+					raceBool = races.needsChoices(sessionData[userID]['race'])
+					themeBool = themes.needsChoices(sessionData[userID]['theme'])
+					classBool = classes.needsChoices(sessionData[userID]['class'])
 					
 					# treat substate as bits -> RTC (RaceThemeClass) -> 000
 					if not raceBool and not themeBool and not classBool:
 						await message.channel.send('Alright, we should be good to move on ahead! When you\'re ready to move on, type **!next** please.')
-						sessionData[message.author.id]['substate'] = -1
+						sessionData[userID]['substate'] = -1
 					else:
 						await message.channel.send('Okay, we have to make some choices about some things yet. When you\'re ready to move on, type **!next** please.')
 						if raceBool:
-							sessionData[message.author.id]['substate'] += 4
-						elif themeBool:
-							sessionData[message.author.id]['substate'] += 2
-						else:
-							sessionData[message.author.id]['substate'] += 1
+							sessionData[userID]['substate'] += 4
+						if themeBool:
+							sessionData[userID]['substate'] += 2
+						if classBool:
+							sessionData[userID]['substate'] += 1
 					return
-		
-		if sessionData[message.author.id]['state'] == 5:
-			#TODO
-			if sessionData[message.author.id]['substate'] >= 4:
+		#RTC sub-choices
+		if sessionData[userID]['state'] == 5:
+			if sessionData[userID]['substate'] >= 4: #Race
 				if message.content == '!next':
-					await message.channel.send(races.getChoices(sessionData[message.author.id]['race']))
+					await message.channel.send(races.getChoices(sessionData[userID]['race']))
 					return
-				if message.content == '
+				elif message.content.startswith('!'):
+					if races.isValidChoice(sessionData[userID]['race'], message.content[1:]):
+						stats = races.getAbilityScoreAdjustmentsChoice(sessionData[userID]['race'], message.content[1:])
+						for stat in stats:
+							sessionData[userID][stat] += stats[stat]
+						
+						sessionData[userID]['substate'] -= 4
+						if sessionData[userID]['substate'] >= 2:
+							await message.channel.send('Cool, on to your Theme!')
+							await message.channel.send(themes.getChoices(sessionData[userID]['theme']))
+							return
+						elif sessionData[userID]['substate'] == 1:
+							await message.channel.send('Cool, now we just need to choose your Key Ability Score for your class!')
+							await message.channel.send(classes.getChoices(sessionData[userID]['class']))
+							return
+						else: #TODO: Done with choices
+							return
+						return
+					else:
+						await message.channel.send('Sorry, ' + message.content[1:] + ' is an invalid choice. Please try again!')
 					
-			elif sessionData[message.author.id]['substate'] >= 2:
-				return
-			elif sessionData[message.author.id]['substate'] == 1:
+			elif sessionData[userID]['substate'] >= 2: #Theme
+				if message.content == '!next':
+					await message.channel.send(themes.getChoices(sessionData[userID]['theme']))
+					return
+				elif message.content.startswith('!'):
+					if themes.isValidChoice(sessionData[userID]['theme'], message.content[1:]):
+						stat = themes.getAbilityScoreAdjustmentsChoice(sessionData[userID]['theme'], message.content[1:])
+						sessionData[userID][message.content[1:]] += stat
+						sessionData[userID]['substate'] -= 2
+
+						if sessionData[userID]['substate'] == 1:
+							await message.channel.send('Cool, now we just need to choose your Key Ability Score for your class!')
+							await message.channel.send(classes.getChoices(sessionData[userID]['class']))
+						else:
+							return #TODO: Done with choices
+						return
+					else:
+						await message.channel.send('Sorry, ' + message.content[1:] + ' is an invalid choice. Please try again!')
+			elif sessionData[userID]['substate'] == 1: #Class
+				if message.content == '!next':
+					await message.channel.send(classes.getChoices(sessionData[userID]['class']))
+					return
+				elif message.content.startswith('!'):
+					return #TODO
 				return
 				
-			elif sessionData[message.author.id]['substate'] == 0:
+			elif sessionData[userID]['substate'] == 0:
 				return
-			elif sessionData[message.author.id]['substate'] == -1:
-				stats = races.getAbilityScoreAdjustments()
-				for stat in stats:
-					sessionData[message.author.id][stat] += stats[stat]
-				#todo: theme adjustment
-				
-				sessionData[message.author.id]['state'] = 6:
+			elif sessionData[userID]['substate'] == -1:
+				if message.content == '!next':
+					stats = races.getAbilityScoreAdjustments(sessionData[userID]['race'])
+					for stat in stats:
+						sessionData[userID][stat] += stats[stat]
+						
+					stats = themes.getAbilityScoreAdjustments(sessionData[userID]['theme'])
+					for stat in stats:
+						sessionData[userID][stat] += stats[stat]
+					
+					sessionData[userID]['state'] = 6
 			return
-		
-		if sessionData[message.author.id]['state'] == 6:
+		#Ability score buys
+		if sessionData[userID]['state'] == 6:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 7:
+		#Class abilities 
+		if sessionData[userID]['state'] == 7:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 8:
+		#Skill Ranks
+		if sessionData[userID]['state'] == 8:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 9:
+		#Feats
+		if sessionData[userID]['state'] == 9:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 10:
+		#Gear/Equipment
+		if sessionData[userID]['state'] == 10:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 11:
+		#Finishing touches
+		if sessionData[userID]['state'] == 11:
 			#TODO
 			return
-		
-		if sessionData[message.author.id]['state'] == 12:
+		#Overview and confirmation
+		if sessionData[userID]['state'] == 12:
 			#TODO
 			return
 		
 					
 		#Level up your character
 		if message.content == '!levelup':
-			if sessionData[message.author.id]['state'] != 13:
+			if sessionData[userID]['state'] != 13:
 				await message.channel.send('You don\'t have a character yet, ' + message.author.name + '! Type **!create** to get started.')
 			else:
 				await message.channel.send('Under construction!')
