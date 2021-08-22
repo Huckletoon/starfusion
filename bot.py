@@ -39,44 +39,50 @@ sessionData = dict()
 class MyClient(discord.Client):
 
 	#list available races
-	async def listRaces(self, message):
+	def listRaces(self):
 		messages = []
 		builder = 'Here\'s a list of all the playable **Races** for our campaign:\n\n'
 
 		for race in self.races:
-			builder += '**' + string.capwords(race, '-') + '**: ' + race['shortDesc'] + '\n\n'
+			builder += '**' + string.capwords(race, '-') + '**: ' + self.races[race]['shortDesc'] + '\n\n'
 			if len(builder) >= MSG_CHAR_THRESHOLD:
 				messages.append(builder)
 				builder = ""
+		
+		if builder != "":
+			messages.append(builder)
 
-		for msg in messages:
-			await message.channel.send(msg)
+		return messages
 	#list available themes
-	async def listThemes(self, message):
+	def listThemes(self):
 		messages = []
 		builder = 'Here\'s a list of all the **Themes** for our campaign:\n\n'
 
 		for theme in self.themes:
-			builder += '**' + string.capwords(theme, '-') + '**: ' + theme['shortDesc'] + '\n\n'
+			builder += '**' + string.capwords(theme, '-') + '**: ' + self.themes[theme]['shortDesc'] + '\n\n'
 			if len(builder) >= MSG_CHAR_THRESHOLD:
 				messages.append(builder)
 				builder = ""
+		
+		if builder != "":
+			messages.append(builder)
 
-		for msg in messages:
-			await message.channel.send(msg)
+		return messages
 	#list available classes
-	async def listClasses(self, message):
+	def listClasses(self):
 		messages = []
 		builder = 'Here\'s a list of all the **Classes** you can choose from:\n\n'
 
 		for charClass in self.classes:
-			builder += '**' + string.capwords(charClass, '-') + '**: ' + charClass['shortDesc'] + '\n\n'
+			builder += '**' + string.capwords(charClass, '-') + '**: ' + self.classes[charClass]['shortDesc'] + '\n\n'
 			if len(builder) >= MSG_CHAR_THRESHOLD:
 				messages.append(builder)
 				builder = ""
 
-		for msg in messages:
-			await message.channel.send(msg)
+		if builder != "":
+			messages.append(builder)
+		
+		return messages
 
 	def rollDie(self, die):
 		return [(self.rng.random() % die) + 1]
@@ -173,13 +179,19 @@ class MyClient(discord.Client):
 			
 		#List character options
 		if message.content == '!list race':
-			self.listRaces(message)
+			messages = self.listRaces()
+			for msg in messages:
+				await message.channel.send(msg)
 			return
 		if message.content == '!list theme':
-			self.listThemes(message)
+			messages = self.listThemes()
+			for msg in messages:
+				await message.channel.send(msg)
 			return
 		if message.content == '!list class':
-			self.listClasses(message)
+			messages = self.listClasses()
+			for msg in messages:
+				await message.channel.send(msg)
 			return
 			
 		
@@ -230,133 +242,15 @@ class MyClient(discord.Client):
 					return
 		#Choose Theme
 		if sessionData[userID]['state'] == 3:
-			if message.content.startswith('!theme '):
-				sessionData[userID]['theme'] = message.content[7:]
-				theme = message.content[7:]
-				
-				if not theme in self.themes:
-					await message.channel.send('\'' + theme + '\' is not a valid theme. Please try again!')
-					return
-					
-				for part in self.getThemeOverview(theme):
-					await message.channel.send(part)
-				await message.channel.send(blocksOfText.themePt3(theme))
-				return
-				
-			elif message.content == '!confirm':
-				if not sessionData[userID]['theme'] in self.themes:
-					await message.channel.send('You haven\'t chosen a proper theme yet!')
-				else:
-					await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['theme'] + '\'** as your theme!\nIf your choice requires further specification (like the specialization of a Scholar), we\'ll take care of that soon!')
-					sessionData[userID]['state'] = 4
-					await message.channel.send(blocksOfText.classPt1())
-					await message.channel.send(blocksOfText.listClasses())
-					await message.channel.send(blocksOfText.classPt2())
-					return
+			#TODO
+			return
 		#Choose Class
 		if sessionData[userID]['state'] == 4:
-			if message.content.startswith('!class '):
-				sessionData[userID]['class'] = message.content[7:]
-				classChoice = message.content[7:]
-				
-				if not classChoice in self.classes:
-					await message.channel.send('\'' + classChoice + '\' is not a valid class. Please try again!')
-					return
-				for part in self.getClassOverview(classChoice):
-					await message.channel.send(part)
-				await message.channel.send(blocksOfText.classPt3(classChoice))
-				return
-				
-			if message.content == '!confirm':
-				if not sessionData[userID]['class'] in self.classes:
-					await message.channel.send('You haven\'t chosen a proper class yet!')
-				else:
-					await message.channel.send('You\'ve chosen**\'' + sessionData[userID]['class'] + '\'** as your class!\nI might have to work with you individually to flesh out your class abilities, but we\'ll cross that bridge when we get there.')
-					sessionData[userID]['state'] = 5
-					await message.channel.send(blocksOfText.abilityScore())
-					raceBool = "choices" in self.races[sessionData[userID]['race']]
-					themeBool = "choices" in self.themes[sessionData[userID]['theme']]
-					classBool = "choices" in self.classes[sessionData[userID]['class']]
-					
-					# treat substate as bits -> RTC (RaceThemeClass) -> 000
-					if not raceBool and not themeBool and not classBool:
-						await message.channel.send('Alright, we should be good to move on ahead! When you\'re ready to move on, type **!next** please.')
-						sessionData[userID]['substate'] = -1
-					else:
-						await message.channel.send('Okay, we have to make some choices about some things yet. When you\'re ready to move on, type **!next** please.')
-						if raceBool:
-							sessionData[userID]['substate'] += 4
-						if themeBool:
-							sessionData[userID]['substate'] += 2
-						if classBool:
-							sessionData[userID]['substate'] += 1
-					return
+			#TODO
+			return
 		#RTC sub-choices
 		if sessionData[userID]['state'] == 5:
-			if sessionData[userID]['substate'] >= 4: #Race
-				if message.content == '!next':
-					await message.channel.send(races.getChoices(sessionData[userID]['race']))
-					return
-				elif message.content.startswith('!'):
-					if races.isValidChoice(sessionData[userID]['race'], message.content[1:]):
-						stats = races.getAbilityScoreAdjustmentsChoice(sessionData[userID]['race'], message.content[1:])
-						for stat in stats:
-							sessionData[userID][stat] += stats[stat]
-						
-						sessionData[userID]['substate'] -= 4
-						if sessionData[userID]['substate'] >= 2:
-							await message.channel.send('Cool, on to your Theme!')
-							await message.channel.send(themes.getChoices(sessionData[userID]['theme']))
-							return
-						elif sessionData[userID]['substate'] == 1:
-							await message.channel.send('Cool, now we just need to choose your Key Ability Score for your class!')
-							await message.channel.send(classes.getChoices(sessionData[userID]['class']))
-							return
-						else: #TODO: Done with choices
-							return
-						return
-					else:
-						await message.channel.send('Sorry, ' + message.content[1:] + ' is an invalid choice. Please try again!')
-					
-			elif sessionData[userID]['substate'] >= 2: #Theme
-				if message.content == '!next':
-					await message.channel.send(themes.getChoices(sessionData[userID]['theme']))
-					return
-				elif message.content.startswith('!'):
-					if themes.isValidChoice(sessionData[userID]['theme'], message.content[1:]):
-						stat = themes.getAbilityScoreAdjustmentsChoice(sessionData[userID]['theme'], message.content[1:])
-						sessionData[userID][message.content[1:]] += stat
-						sessionData[userID]['substate'] -= 2
-
-						if sessionData[userID]['substate'] == 1:
-							await message.channel.send('Cool, now we just need to choose your Key Ability Score for your class!')
-							await message.channel.send(classes.getChoices(sessionData[userID]['class']))
-						else:
-							return #TODO: Done with choices
-						return
-					else:
-						await message.channel.send('Sorry, ' + message.content[1:] + ' is an invalid choice. Please try again!')
-			elif sessionData[userID]['substate'] == 1: #Class
-				if message.content == '!next':
-					await message.channel.send(classes.getChoices(sessionData[userID]['class']))
-					return
-				elif message.content.startswith('!'):
-					return #TODO
-				return
-				
-			elif sessionData[userID]['substate'] == 0:
-				return
-			elif sessionData[userID]['substate'] == -1:
-				if message.content == '!next':
-					stats = races.getAbilityScoreAdjustments(sessionData[userID]['race'])
-					for stat in stats:
-						sessionData[userID][stat] += stats[stat]
-						
-					stats = themes.getAbilityScoreAdjustments(sessionData[userID]['theme'])
-					for stat in stats:
-						sessionData[userID][stat] += stats[stat]
-					
-					sessionData[userID]['state'] = 6
+			#TODO
 			return
 		#Ability score buys
 		if sessionData[userID]['state'] == 6:
