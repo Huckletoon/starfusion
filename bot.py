@@ -2,11 +2,15 @@ from dotenv import load_dotenv
 import discord
 import json
 import os
+import random
+import string
 
 import blocksOfText
-import classes
-import races
-import themes
+
+from packages.squirrel3 import squirrel3
+
+MSG_CHAR_LIMIT = 2000
+MSG_CHAR_THRESHOLD = 1750
 
 load_dotenv()
 sessionData = dict()
@@ -31,13 +35,76 @@ sessionData = dict()
 '''
 
 
+
 class MyClient(discord.Client):
+
+	#list available races
+	async def listRaces(self, message):
+		messages = []
+		builder = 'Here\'s a list of all the playable **Races** for our campaign:\n\n'
+
+		for race in self.races:
+			builder += '**' + string.capwords(race, '-') + '**: ' + race['shortDesc'] + '\n\n'
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		for msg in messages:
+			await message.channel.send(msg)
+	#list available themes
+	async def listThemes(self, message):
+		messages = []
+		builder = 'Here\'s a list of all the **Themes** for our campaign:\n\n'
+
+		for theme in self.themes:
+			builder += '**' + string.capwords(theme, '-') + '**: ' + theme['shortDesc'] + '\n\n'
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		for msg in messages:
+			await message.channel.send(msg)
+	#list available classes
+	async def listClasses(self, message):
+		messages = []
+		builder = 'Here\'s a list of all the **Classes** you can choose from:\n\n'
+
+		for charClass in self.classes:
+			builder += '**' + string.capwords(charClass, '-') + '**: ' + charClass['shortDesc'] + '\n\n'
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		for msg in messages:
+			await message.channel.send(msg)
+
+	def rollDie(self, die):
+		return [(self.rng.random() % die) + 1]
+
+	def rollDice(self, numDice, die):
+		results = []
+		for x in range(numDice):
+			results.append((self.rng.random() % die) + 1)
+		return results
+
+	def getRaceOverview(self, race):
+		pass
+
+	def getClassOverview(self, classChoice):
+		pass
+
+	def getThemeOverview(self, theme):
+		pass
 
 	#on ready
 	async def on_ready(self):
 		print('Logged on as {0}!'.format(self.user))
 		print('Self ID: {0}'.format(self.user.id))
 		
+
+		self.rng = squirrel3.Squirrel3Random(random.Random(self.user.id))
+		self.rng.seed(self.user.id)
+
 		#initialize session data for each user
 		for guild in self.guilds:
 			print('Logged into guildID: {0}'.format(guild.id))
@@ -82,6 +149,10 @@ class MyClient(discord.Client):
 						sessionData[member.id]['maxstamina'] = 0
 						sessionData[member.id]['maxhp'] = 0
 						sessionData[member.id]['keyabilityscore'] = ''
+		#initialize character option data
+		self.races = json.load(open('characterCreation/races.json', 'r'))
+		self.themes = json.load(open('characterCreation/themes.json', 'r'))
+		self.classes = json.load(open('characterCreation/classes.json', 'r'))
 
 	#user sent a message
 	async def on_message(self, message):
@@ -102,13 +173,13 @@ class MyClient(discord.Client):
 			
 		#List character options
 		if message.content == '!list race':
-			await message.channel.send(blocksOfText.listRaces())
+			self.listRaces(message)
 			return
 		if message.content == '!list theme':
-			await message.channel.send(blocksOfText.listThemes())
+			self.listThemes(message)
 			return
 		if message.content == '!list class':
-			await message.channel.send(blocksOfText.listClasses())
+			self.listClasses(message)
 			return
 			
 		
@@ -140,15 +211,15 @@ class MyClient(discord.Client):
 				sessionData[userID]['race'] = message.content[6:]
 				race = message.content[6:]
 				
-				if not races.isValid(race):
+				if not race in self.races:
 					await message.channel.send('\'' + race + '\' is not a valid race. Please try again!')
 					return
 				
-				await message.channel.send(races.getRaceOverview(race))
+				await message.channel.send(self.getRaceOverview(race))
 				await message.channel.send(blocksOfText.racePt3(race))
 				
 			if message.content == '!confirm':
-				if not races.isValid(sessionData[userID]['race']):
+				if not sessionData[userID]['race'] in self.races:
 					await message.channel.send('You haven\'t chosen a proper race yet!')
 				else:
 					await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['race'] + '\'** as your race!\nIf your racial choice requires further specification for \'sub-race\' (like the different kinds of Lashunta or Gnomes), we\'ll take care of that after a couple more steps.')
@@ -163,17 +234,17 @@ class MyClient(discord.Client):
 				sessionData[userID]['theme'] = message.content[7:]
 				theme = message.content[7:]
 				
-				if not themes.isValid(theme):
+				if not theme in self.themes:
 					await message.channel.send('\'' + theme + '\' is not a valid theme. Please try again!')
 					return
 					
-				for part in themes.getThemeOverview(theme):
+				for part in self.getThemeOverview(theme):
 					await message.channel.send(part)
 				await message.channel.send(blocksOfText.themePt3(theme))
 				return
 				
 			elif message.content == '!confirm':
-				if not themes.isValid(sessionData[userID]['theme']):
+				if not sessionData[userID]['theme'] in self.themes:
 					await message.channel.send('You haven\'t chosen a proper theme yet!')
 				else:
 					await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['theme'] + '\'** as your theme!\nIf your choice requires further specification (like the specialization of a Scholar), we\'ll take care of that soon!')
@@ -188,25 +259,24 @@ class MyClient(discord.Client):
 				sessionData[userID]['class'] = message.content[7:]
 				classChoice = message.content[7:]
 				
-				if not classes.isValid(classChoice):
+				if not classChoice in self.classes:
 					await message.channel.send('\'' + classChoice + '\' is not a valid class. Please try again!')
 					return
-				for part in classes.getClassOverview(classChoice):
+				for part in self.getClassOverview(classChoice):
 					await message.channel.send(part)
 				await message.channel.send(blocksOfText.classPt3(classChoice))
 				return
 				
 			if message.content == '!confirm':
-				if not classes.isValid(sessionData[userID]['class']):
+				if not sessionData[userID]['class'] in self.classes:
 					await message.channel.send('You haven\'t chosen a proper class yet!')
 				else:
 					await message.channel.send('You\'ve chosen**\'' + sessionData[userID]['class'] + '\'** as your class!\nI might have to work with you individually to flesh out your class abilities, but we\'ll cross that bridge when we get there.')
 					sessionData[userID]['state'] = 5
 					await message.channel.send(blocksOfText.abilityScore())
-					#todo: finish filling out classes.py {mystic, operative, solarian, soldier, technomancer}
-					raceBool = races.needsChoices(sessionData[userID]['race'])
-					themeBool = themes.needsChoices(sessionData[userID]['theme'])
-					classBool = classes.needsChoices(sessionData[userID]['class'])
+					raceBool = "choices" in self.races[sessionData[userID]['race']]
+					themeBool = "choices" in self.themes[sessionData[userID]['theme']]
+					classBool = "choices" in self.classes[sessionData[userID]['class']]
 					
 					# treat substate as bits -> RTC (RaceThemeClass) -> 000
 					if not raceBool and not themeBool and not classBool:
