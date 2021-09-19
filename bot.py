@@ -12,7 +12,18 @@ import blocksOfText
 from packages.squirrel3 import squirrel3
 
 MSG_CHAR_LIMIT = 2000
-MSG_CHAR_THRESHOLD = 1750
+MSG_CHAR_THRESHOLD = 1500
+TRAINED_SKILLS = [
+	'computers',
+	'culture',
+	'engineering',
+	'life science',
+	'medicine',
+	'mysticism',
+	'physical science',
+	'profession',
+	'sleight of hand'
+]
 
 patterns = {}
 patterns['r xdy'] = re.compile(r'\d+d\d+', re.IGNORECASE)
@@ -21,7 +32,9 @@ patterns['+'] = re.compile(r'\+')
 patterns['-'] = re.compile(r'\-')
 patterns['numbers'] = re.compile(r'\d+')
 load_dotenv()
+user_data_dir = 'users/'
 sessionData = {}
+
 
 '''
 # {userid, int}
@@ -41,6 +54,31 @@ sessionData = {}
 # 12 = Overview and confirm character creation
 # 13 = Character exists
 '''
+
+def save_session_data():
+	for user in sessionData:
+		data = json.dumps(sessionData[user])
+		user_file_name = f'{user_data_dir}{user}.json'
+		try:
+			user_file = open(user_file_name, 'w')
+			user_file.write(data)
+			user_file.close()
+			print(f'User data {user_file_name} saved successfully!')
+		except Exception as e:
+			print(f'ERROR: User data {user_file_name} failed to save: {e}')
+
+def load_session_data():
+	user_files = os.listdir(user_data_dir)
+	for file in user_files:
+		user_id = file.removesuffix('.json')
+		user_file_name = user_data_dir+file
+		try:
+			user_file = open(user_file_name, 'r')
+			sessionData[int(user_id)] = json.loads(user_file.read())
+			user_file.close()
+			print(f'User data {user_data_dir+file} loaded successfully!')
+		except Exception as e:
+			print(f'ERROR: User data {user_file_name} failed to load: {e}')
 
 def validate_token(token):
 	for pattern in patterns:
@@ -85,10 +123,14 @@ def roll_dice(command, rng):
 	return components
 
 
-
+#------------------------#
+#---  Discord Client  ---#
+#------------------------#
 class MyClient(discord.Client):
 
-	#list available races
+	#----------------------------------#
+	#---  List Information methods  ---#
+	#----------------------------------#
 	def listRaces(self):
 		messages = []
 		builder = 'Here\'s a list of all the playable **Races** for our campaign:\n\n'
@@ -103,7 +145,6 @@ class MyClient(discord.Client):
 			messages.append(builder)
 
 		return messages
-	#list available themes
 	def listThemes(self):
 		messages = []
 		builder = 'Here\'s a list of all the **Themes** for our campaign:\n\n'
@@ -118,7 +159,6 @@ class MyClient(discord.Client):
 			messages.append(builder)
 
 		return messages
-	#list available classes
 	def listClasses(self):
 		messages = []
 		builder = 'Here\'s a list of all the **Classes** you can choose from:\n\n'
@@ -134,25 +174,119 @@ class MyClient(discord.Client):
 		
 		return messages
 
-	def rollDie(self, die):
-		return [(self.rng.random() % die) + 1]
-
-	def rollDice(self, numDice, die):
-		results = []
-		for x in range(numDice):
-			results.append((self.rng.random() % die) + 1)
-		return results
-
+	#------------------------------#
+	#---  Get Overview methods  ---#
+	#------------------------------#
 	def getRaceOverview(self, race):
-		pass
+		messages = []
+		builder = f"**{string.capwords(race, '-')}**\n{self.races[race]['longDesc']}\n\n"
 
+		builder += "**Stats**\n========================================\n"
+		for stat in self.races[race]['stats']:
+			builder += f"**{string.capwords(stat)}**: {self.races[race]['stats'][stat]}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+		
+		builder += "\n**Racial Traits**\n========================================\n"
+		for trait in self.races[race]['traits']:
+			builder += f"**{string.capwords(trait)}**: {self.races[race]['traits'][trait]}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+		
+		if 'choices' in self.races[race]:
+			builder += "\n**Additional Choices**\n========================================\n"
+			for choice in self.races[race]['choices']:
+				for option in self.races[race]['choices'][choice]:
+					builder += f"**{string.capwords(option)}**\n{self.races[race]['choices'][choice][option]['description']}\n"
+					if len(builder) >= MSG_CHAR_THRESHOLD:
+						messages.append(builder)
+						builder = ""
+
+		if builder != "":
+			messages.append(builder)
+		return messages
 	def getClassOverview(self, classChoice):
-		pass
+		messages = []
+		builder = f"**{string.capwords(classChoice)}** (<{self.classes[classChoice]['link']}>)\n========================================\n{self.classes[classChoice]['longDesc']}\n\n"
 
+		builder += "**Stats**\n========================================\n"
+		for stat in self.classes[classChoice]['stats']:
+			builder += f"**{string.capwords(stat)}**: {self.classes[classChoice]['stats'][stat]}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		builder += f"**Key Ability Score**: {string.capwords(self.classes[classChoice]['keyAbilityScore'])}\n"
+		if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+		
+		builder += f"\n**Skill Ranks per Level**: {self.classes[classChoice]['ranksPerLevel']} + Intelligence modifier"
+		builder += "\n**Class Skills**\n========================================\n"
+		for skill in self.classes[classChoice]['classSkills']:
+			builder += f"{string.capwords(skill)}"
+			if skill in TRAINED_SKILLS: builder += " :star:"
+			builder += "\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+		
+		builder += "\n**Proficiencies**\n========================================\n"
+		for prof in self.classes[classChoice]['proficiencies']:
+			builder += f"{string.capwords(prof)}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		builder += f"\n**Base Attack Bonus**: {self.classes[classChoice]['baseAttackBonus']}"
+		builder += "\n**==Saving Throws==**\n"
+		for save in self.classes[classChoice]['savingThrows']:
+			builder += f"{string.capwords(save)}: +{self.classes[classChoice]['savingThrows'][save]}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+
+		builder += "\n**Class Features**\n========================================\n"
+		messages.append(builder)
+		builder = ""
+		for feature in self.classes[classChoice]['features']:
+			builder += f"**{feature}**\n"
+			builder += f"{self.classes[classChoice]['features'][feature]}\n"
+			
+			messages.append(builder)
+			builder = ""
+
+		if builder != "":
+			messages.append(builder)
+		return messages
 	def getThemeOverview(self, theme):
-		pass
+		messages = []
+		builder = f"**{string.capwords(theme)}**\n{self.themes[theme]['longDesc']}\n\n"
 
-	#on ready
+		if 'stats' in self.themes[theme]:
+			builder += "**Stats**\n========================================\n"
+			for stat in self.themes[theme]['stats']:
+				builder += f"**{string.capwords(stat)}**: {self.themes[theme]['stats'][stat]}\n"
+				if len(builder) >= MSG_CHAR_THRESHOLD:
+					messages.append(builder)
+					builder = ""
+
+		builder += '\n**Theme Features**\n========================================\n'
+		for feature in self.themes[theme]['features']:
+			builder += f"**{feature}** - Level {self.themes[theme]['features'][feature]['level']}\n{self.themes[theme]['features'][feature]['description']}\n"
+			if len(builder) >= MSG_CHAR_THRESHOLD:
+				messages.append(builder)
+				builder = ""
+		
+		if builder != "":
+			messages.append(builder)
+		return messages
+
+	#------------------#
+	#---  On Ready  ---#
+	#------------------#
 	async def on_ready(self):
 		print('Logged on as {0}!'.format(self.user))
 		print('Self ID: {0}'.format(self.user.id))
@@ -160,78 +294,63 @@ class MyClient(discord.Client):
 
 		self.rng = squirrel3.Squirrel3Random(random.Random(self.user.id))
 		self.rng.seed(self.user.id)
+		load_session_data()
 
 		#initialize session data for each user
 		for guild in self.guilds:
 			print('Logged into guildID: {0}'.format(guild.id))
 			async for member in guild.fetch_members():
 				if member.id not in sessionData:
-					print('Loading session data for memberID ' + str(member.id) + ' in guildID ' + str(guild.id) + '...')
-					filepath = str(member.id) + '.json'
-					if os.path.exists(filepath):
-						sessionData[member.id] = dict()
-						sessionData[member.id]['state'] = 13
-						sessionData[member.id]['substate'] = 0
-						sessionData[member.id]['race'] = '' #TODO: Load from file
-						sessionData[member.id]['theme'] = '' #TODO
-						sessionData[member.id]['class'] = '' #TODO
-						sessionData[member.id]['strength'] = 10 #TODO
-						sessionData[member.id]['dexterity'] = 10 #TODO
-						sessionData[member.id]['constitution'] = 10 #TODO
-						sessionData[member.id]['intelligence'] = 10 #TODO
-						sessionData[member.id]['wisdom'] = 10 #TODO
-						sessionData[member.id]['charisma'] = 10 #TODO
-						sessionData[member.id]['abilitypoints'] = 0
-						sessionData[member.id]['maxresolve'] = 0 #TODO
-						sessionData[member.id]['maxstamina'] = 0 #TODO
-						sessionData[member.id]['maxhp'] = 0 #TODO
-						sessionData[member.id]['keyabilityscore'] = ''
-						
-					else:
-						sessionData[member.id] = dict()
-						sessionData[member.id]['state'] = 0
-						sessionData[member.id]['substate'] = 0
-						sessionData[member.id]['race'] = ''
-						sessionData[member.id]['theme'] = ''
-						sessionData[member.id]['class'] = ''
-						sessionData[member.id]['strength'] = 10
-						sessionData[member.id]['dexterity'] = 10
-						sessionData[member.id]['constitution'] = 10
-						sessionData[member.id]['intelligence'] = 10
-						sessionData[member.id]['wisdom'] = 10
-						sessionData[member.id]['charisma'] = 10
-						sessionData[member.id]['abilitypoints'] = 10
-						sessionData[member.id]['maxresolve'] = 0
-						sessionData[member.id]['maxstamina'] = 0
-						sessionData[member.id]['maxhp'] = 0
-						sessionData[member.id]['keyabilityscore'] = ''
+					sessionData[member.id] = dict()
+					sessionData[member.id]['state'] = 0
+					sessionData[member.id]['substate'] = 0
+					sessionData[member.id]['race'] = ''
+					sessionData[member.id]['theme'] = ''
+					sessionData[member.id]['class'] = ''
+					sessionData[member.id]['strength'] = 10
+					sessionData[member.id]['dexterity'] = 10
+					sessionData[member.id]['constitution'] = 10
+					sessionData[member.id]['intelligence'] = 10
+					sessionData[member.id]['wisdom'] = 10
+					sessionData[member.id]['charisma'] = 10
+					sessionData[member.id]['abilitypoints'] = 10
+					sessionData[member.id]['maxresolve'] = 0
+					sessionData[member.id]['maxstamina'] = 0
+					sessionData[member.id]['maxhp'] = 0
+					sessionData[member.id]['keyabilityscore'] = ''
 		#initialize character option data
-		self.races = json.load(open('characterCreation/races.json', 'r'))
-		self.themes = json.load(open('characterCreation/themes.json', 'r'))
-		self.classes = json.load(open('characterCreation/classes.json', 'r'))
+		self.races = json.load(open('characterCreation/races.json', 'r', encoding='utf-8'))
+		self.themes = json.load(open('characterCreation/themes.json', 'r', encoding='utf-8'))
+		self.classes = json.load(open('characterCreation/classes.json', 'r', encoding='utf-8'))
 
-
-	#user sent a message
+	#--------------------------#
+	#---  Command Handling  ---#
+	#--------------------------#
 	async def on_message(self, message):
 		#prevent acting on own messages
 		if message.author == self.user:
 			return
 		elif not message.content.startswith('!'):
 			return
-		
 		#Message vars
 		userID = message.author.id
 		command = message.content[1:]
 
-		#DEBUG
+		#
+		# DEBUG
+		#
 		if command == 'members':
 			print(sessionData)
 			return
 		if command == 'purge':
 			await message.channel.purge()
 			return
-			
-		#List character options
+		if command == 'save':
+			save_session_data()
+
+		#--------------------------------#
+		#---  List character options  ---#
+		#--------------------------------#
 		if command == 'list race':
 			messages = self.listRaces()
 			for msg in messages:
@@ -248,9 +367,9 @@ class MyClient(discord.Client):
 				await message.channel.send(msg)
 			return
 			
-		#--------------------------
-		#---  Rolling Commands  ---
-		#--------------------------
+		#--------------------------#
+		#---  Rolling Commands  ---#
+		#--------------------------#
 		if command.startswith('r ') or command.startswith('roll '):
 			try:
 				outcome = roll_dice(command, self.rng)
@@ -298,64 +417,110 @@ class MyClient(discord.Client):
 									f"Attempted: {command}\n"
 									f"Error: {e}")
 
-		#----------------------------
-		#---  Character Creation  ---
-		#----------------------------
+		#----------------------------#
+		#---  Character Creation  ---#
+		#----------------------------#
 		if sessionData[userID]['state'] != 13:
 			#Create Character
 			if sessionData[userID]['state'] == 0:
 				
 				#Start character creation
-				if message.content == '!create':
+				if command == 'create':
 					#check if user already has a file
 					filepath = str(userID) + '.json'
 					if os.path.exists(filepath):
 						await message.channel.send('You already have a character!')
 						sessionData[userID]['state'] = 13
+						#TODO: Load character file
 						return
 					
 					sessionData[userID]['state'] = 1
 					await message.channel.send(blocksOfText.introPt1(message.author.name))
 					await message.channel.send(blocksOfText.introPt2())
+					return
 			#Intro
 			if sessionData[userID]['state'] == 1:
-				if message.content == '!next':
+				if command == 'next':
 					sessionData[userID]['state'] = 2
 					await message.channel.send(blocksOfText.racePt1())
-					await message.channel.send(blocksOfText.listRaces())
+					for msg in self.listRaces():
+						await message.channel.send(msg)
 					await message.channel.send(blocksOfText.racePt2())
+					return
 			#Choose Race
 			if sessionData[userID]['state'] == 2:
-				if message.content.startswith('!race '):
-					sessionData[userID]['race'] = message.content[6:]
-					race = message.content[6:]
+				if command.startswith('race '):
+					sessionData[userID]['race'] = command[5:].lower()
+					race = command[5:].lower()
 					
 					if not race in self.races:
 						await message.channel.send('\'' + race + '\' is not a valid race. Please try again!')
 						return
 					
-					await message.channel.send(self.getRaceOverview(race))
+					for msg in self.getRaceOverview(race):
+						await message.channel.send(msg)
 					await message.channel.send(blocksOfText.racePt3(race))
 					
-				if message.content == '!confirm':
+				if command == 'confirm':
 					if not sessionData[userID]['race'] in self.races:
 						await message.channel.send('You haven\'t chosen a proper race yet!')
 					else:
 						await message.channel.send('You\'ve chosen **\'' + sessionData[userID]['race'] + '\'** as your race!\nIf your racial choice requires further specification for \'sub-race\' (like the different kinds of Lashunta or Gnomes), we\'ll take care of that after a couple more steps.')
 						sessionData[userID]['state'] = 3
 						await message.channel.send(blocksOfText.themePt1())
-						await message.channel.send(blocksOfText.listThemes())
+						for msg in self.listThemes():
+							await message.channel.send(msg)
 						await message.channel.send(blocksOfText.themePt2())
-						return
+				return
 			#Choose Theme
 			if sessionData[userID]['state'] == 3:
-				#TODO
+				if command.startswith('theme'):
+					sessionData[userID]['theme'] = command[6:].lower()
+					theme = command[6:].lower()
+
+					if not theme in self.themes:
+						await message.channel.send(f"'{theme}' is not a valid theme. Please try again!")
+						return
+					
+					for msg in self.getThemeOverview(theme):
+						await message.channel.send(msg)
+					await message.channel.send(blocksOfText.themePt3(theme))
+
+				if command == 'confirm':
+					if not sessionData[userID]['theme'] in self.themes:
+						await message.channel.send("You haven't chosen a proper theme yet!")
+					else:
+						await message.channel.send(f"You've chosen **{sessionData[userID]['theme']}** as your theme!\nIf your theme choice requires further choices at level 1 (the 'Themeless' theme), we'll take care of that soon.")
+						sessionData[userID]['state'] = 4
+						await message.channel.send(blocksOfText.classPt1())
+						for msg in self.listClasses():
+							await message.channel.send(msg)
+						await message.channel.send(blocksOfText.classPt2())
 				return
-			#Choose Class
+			#Choose Class #TODO
 			if sessionData[userID]['state'] == 4:
-				#TODO
+				if command.startswith('class'):
+					sessionData[userID]['class'] = command[6:].lower()
+					classChoice = command[6:].lower()
+					
+					if not classChoice in self.classes:
+						await message.channel.send(f"'{classChoice}' is not a valid class. Please try again!")
+						return
+
+					for msg in self.getClassOverview(classChoice):
+						await message.channel.send(msg)
+					await message.channel.send(blocksOfText.classPt3(classChoice))
+
+				if command == 'confirm':
+					if not sessionData[userID]['class'] in self.classes:
+						await message.channel.send("You haven't chosen a proper class yet!")
+					else:
+						await message.channel.send(f"You've chosen **{sessionData[userID]['class']}** as your class!\nIf your class choice requires further choices at level 1 (most do), we'll take care of that soon.")
+						sessionData[userID]['state'] = 5
+						#TODO
+
 				return
-			#RTC sub-choices
+			#Race-Theme-Class sub-choices
 			if sessionData[userID]['state'] == 5:
 				#TODO
 				return
@@ -388,7 +553,6 @@ class MyClient(discord.Client):
 				#TODO
 				return
 			
-					
 		#Level up your character
 		if message.content == '!levelup':
 			if sessionData[userID]['state'] != 13:
