@@ -18,7 +18,7 @@
                 "level": 12,
                 "description": "Reduce any penalties to **Piloting** checks you make when on a vehicle by 1. When you take the double maneuver action during a vehicle chase, reduce the penalty for each action by 1. Whenever a **Piloting** check has a penalty for failing by 5 or more, you take that penalty only if you fail by 10 or more."
             },
-            "Master Pilo": {
+            "Master Pilot": {
                 "level": 18,
                 "description": "Up to twice per day, when you defeat a significant foe in starship combat as a pilot or succeed in a vehicle chase (meaning that you've either escaped a pursuer or caught or defeated your opponent), you recover 1 **Resolve Point**."
             }
@@ -160,15 +160,15 @@
                 "level": 1,
                 "description": "You are an expert in one particular field of study, and your passion for it shows. Choose either **Life Science** or **Physical Science**, and then choose a field of specialization. If you pick **Life Science**, you can specialize in:\n     Bioengineering, Biology, Botany, Ecology, Genetics, Xenobiology, Zoology, Another field (at GM's discretion)\nIf you pick **Physical Science**, you can specialize in:\n     Astronomy, Chemistry, Climatology, Geography, Geology, Meteorology, Oceanography, Physics, Another field (at GM's discretion)\nThe DC of skill checks to recall knowledge about your specialty is reduced by 5. Your chosen skill is a class skill for you, though if it is a class skill from the class you take, you instead gain a +1 bonus to checks with your chosen skill."
             },
-            "b": {
+            "Tip of the Tongue": {
                 "level": 6,
                 "description": "Once per day, you can reroll any skill check to recall knowledge. You must decide to use this ability after rolling but before learning the information from your first roll. You must take the second result, even if it is worse."
             },
-            "c": {
+            "Research Maven": {
                 "level": 12,
                 "description": "You can research much faster than most other people, allowing you to collate information from databases, libraries, and other sources in one-quarter the normal time; with this ability, you can typically take 20 to recall knowledge in 5 rounds."
             },
-            "d": {
+            "Master Scholar": {
                 "level": 18,
                 "description": "Up to twice per day, when in a situation where information from your specialty field could be useful (at GM's discretion), you can spend 10 minutes in deep contemplation and research of your specialty field and recover 1 **Resolve Point**, in addition to using recall knowledge for the information you seek. This doesn't count as resting to regain **Stamina Points**."
             }
@@ -227,13 +227,10 @@
     "themeless": {
         "shortDesc": "One who doesn't fit into any niche above but forges a personal path of determination and training.",
         "longDesc": "You don't fit neatly into any of the above categories, or you see yourself as a blank slate. A themeless character is considerably less powerful than a character with a theme, so take care if choosing this option!",
-        "stats": {
-            "strength": 0
-        },
         "features": {
             "General Knowledge": {
                 "level": 1,
-                "description": "You gain a class skill of your choice."
+                "description": "You gain a class skill of your choice and can raise any Ability Score by +1."
             },
             "Certainty": {
                 "level": 6,
@@ -250,6 +247,9 @@
         },
         "choices": {
             "abilityScore": {
+                "any": 1
+            },
+            "class skill": {
                 "any": 1
             }
         }

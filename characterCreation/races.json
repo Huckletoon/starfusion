@@ -17,10 +17,20 @@
             "Upgrade Slot": "Androids have a single armor upgrade slot in their bodies. Regardless of whether androids are wearing physical armor, they can use this slot to install any one armor upgrade that could be installed into light armor."
         },
         "skills": {
-            "sense motive": "Flat Affect"
+            "sense motive": {
+                "Flat Affect" : {
+                    "effect": -2,
+                    "manual": false
+                }
+            }
         },
         "savingThrows": {
-            "any": "Constructed"
+            "any": {
+                "Constructed": {
+                    "effect": -2,
+                    "manual": true
+                }
+            }
         }
     },
     "dwarf": {
@@ -40,6 +50,49 @@
             "Stonecunning": "Dwarves gain a +2 bonus to Perception checks to notice unusual stonework, such as traps and hidden doors located in stone walls or floors. They receive a check to notice such features whenever they pass within 10 feet of them, whether or not they are actively looking.",
             "Traditional Enemies": "Dwarves still train to fight their ancient enemies. A dwarf gains a +1 racial bonus to attack rolls against a creature with the goblinoid or orc subtype and a +4 racial bonus to AC against an attack from a creature with the giant subtype.",
             "Weapon Familiarity": "Dwarves are proficient with basic and advanced melee weapons and gain specialization with those weapons at 3rd level."
+        },
+        "skills": {
+            "perception": {
+                "Stonecunning": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
+        },
+        "savingThrows": {
+            "any": {
+                "Slow but Steady": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
+        },
+        "ac": {
+            "Slow but Steady": {
+                "effect": 4,
+                "manual": true
+            },
+            "Traditional Enemies": {
+                "effect": 4,
+                "manual": true
+            }
+        },
+        "attackRolls": {
+            "Traditional Enemies": {
+                "effect": 1,
+                "manual": true
+            }
+        },
+        "feats": {
+            "levels": {
+                "1": {
+                    "basic melee weapon proficiency": "Weapon Familiarity",
+                    "advanced melee weapon proficiency": "Weapon Familiarity"
+                },
+                "3": {
+                    "weapon specialization": "Weapon Familiarity"
+                }
+            }
         }
     },
     "elf": {
@@ -58,6 +111,36 @@
             "Elven Magic": "Elves receive a +2 racial bonus to caster level checks to overcome spell resistance. In addition, elves receive a +2 racial bonus to Mysticism skill checks.",
             "Keen Senses": "Elves receive a +2 racial bonus to Perception skill checks.",
             "Low-Light Vision": "Elves can see in dim light as if it were normal light."
+        },
+        "savingThrows": {
+            "any": {
+                "Elven Immunities": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
+        },
+        "skills": {
+            "mysticism": {
+                "Elven Magic": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "perception": {
+                "Keen Senses": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
+        },
+        "magic": {
+            "casting": {
+                "Elven Magic": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
         }
     },
     "gnome": {
@@ -91,6 +174,26 @@
                     }
                 }
             }
+        },
+        "skills": {
+            "culture": {
+                "Curious": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
+        },
+        "savingThrows": {
+            "any": {
+                "Eternal Hope": {
+                    "effect": 2,
+                    "manual": true
+                },
+                "Gnome Magic": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
         }
     },
     "half-elf": {
@@ -116,6 +219,29 @@
                     }
                 }
             }
+        },
+        "savingThrows": {
+            "any": {
+                "Elven Blood": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
+        },
+        "skills": {
+            "perception": {
+                "Keen Senses": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
+        },
+        "feats": {
+            "levels": {
+                "1": {
+                    "skill focus": "Adaptability"
+                }
+            }
         }
     },
     "halfling": {
@@ -134,6 +260,44 @@
             "Keen Senses": "Halflings receive a +2 racial bonus to Perception skill checks.",
             "Sneaky": "Halflings receive a +2 racial bonus to Stealth checks. In addition, halflings reduce the penalty for using Stealth while moving by 5, and reduce the Stealth check penalty for sniping by 10.",
             "Sure-Footed": "Halflings receive a +2 racial bonus to Acrobatics and Athletics skill checks."
+        },
+        "skills": {
+            "perception": {
+                "Keen Senses": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "stealth": {
+                "Sneaky": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "acrobatics": {
+                "Sure-Footed": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "athletics": {
+                "Sure-Footed": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
+        },
+        "savingThrows": {
+            "any": {
+                "Halfling Luck": {
+                    "effect": 1,
+                    "manual": false
+                },
+                "Halfling Luck (fear)": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
         }
     },
     "half-orc": {
@@ -159,6 +323,20 @@
                     }
                 }
             }
+        },
+        "skills": {
+            "intimidate": {
+                "Intimidating": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "survival": {
+                "Self-Sufficient": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
         }
     },
     "human": {
@@ -182,6 +360,13 @@
                     }
                 }
             }
+        },
+        "feats": {
+            "levels": {
+                "1": {
+                    "any": "Bonus Feat"
+                }
+            }
         }
     },
     "kasatha": {
@@ -200,6 +385,26 @@
             "Four-Armed": "Kasathas have four arms, which allows them to wield and hold up to four hands’ worth of weapons and equipment. While their multiple arms increase the number of items they can have at the ready, it doesn’t increase the number of attacks they can make during combat.",
             "Historian": "Due to their in-depth historical training and the wide-ranging academic background knowledge they possess, kasathas receive a +2 racial bonus to Culture checks.",
             "Natural Grace": "Kasathas receive a +2 racial bonus to Acrobatics and Athletics checks."
+        },
+        "skills": {
+            "culture": {
+                "Historian": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "acrobatics": {
+                "Natural Grace": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "athletics": {
+                "Natural Grace": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
         }
     },
     "lashunta": {
@@ -259,6 +464,20 @@
             "Communalism": "Shirrens are used to working with others as part of a team. Once per day, as long as an ally is within 10 feet, a shirren can roll a single attack roll or skill check twice and take the higher result.",
             "Cultural Fascination": "Shirrens are eager to learn about new cultures and societies. Shirrens receive a +2 racial bonus to Culture and Diplomacy checks.",
             "Limited Telepathy": "Shirrens can communicate telepathically with any creatures within 30 feet with whom they share a language. Conversing telepathically with multiple creatures simultaneously is just as difficult as listening to multiple people speak."
+        },
+        "skills": {
+            "culture": {
+                "Cultural Fascination": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "diplomacy": {
+                "Cultural Fascination": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
         }
     },
     "vesk": {
@@ -277,6 +496,20 @@
             "Fearless": "Vesk receive a +2 racial bonus to saving throws against fear effects.",
             "Low-Light Vision": "Vesk can see in dim light as if it were normal light.",
             "Natural Weapons": "Vesk are always considered armed. They can deal 1d3 lethal damage with unarmed strikes and the attack doesn’t count as archaic. Vesk gain a unique weapon specialization with their natural weapons at 3rd level, allowing them to add 1–1/2 × their character level to their damage rolls for their natural weapons (instead of just adding their character level, as usual)."
+        },
+        "ac": {
+            "Armor Savant": {
+                "effect": 1,
+                "manual": true
+            }
+        },
+        "savingThrows": {
+            "any": {
+                "Fearless": {
+                    "effect": 2,
+                    "manual": true
+                }
+            }
         }
     },
     "ysoki": {
@@ -295,6 +528,26 @@
             "Darkvision": "Ysoki can see up to 60 feet in the dark.",
             "Moxie": "Ysoki are scrappy and nimble even when the odds are against them. A ysoki can stand from prone as a swift action. Additionally, when off-kilter, a ysoki does not take the normal penalties to attacks or gain the flat-footed condition. When attempting an Acrobatics check to tumble through the space of an opponent at least one size category larger than himself, a ysoki receive a +5 racial bonus to the check.",
             "Scrounger": "Ysoki receive a +2 racial bonus to Engineering, Stealth, and Survival checks."
+        },
+        "skills": {
+            "engineering": {
+                "Scrounger": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "stealth": {
+                "Scrounger": {
+                    "effect": 2,
+                    "manual": false
+                }
+            },
+            "survival": {
+                "Scrounger": {
+                    "effect": 2,
+                    "manual": false
+                }
+            }
         }
     }
 

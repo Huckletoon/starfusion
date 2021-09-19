@@ -29,7 +29,7 @@ def racePt1():
 	
 def racePt2():
 	return '''To select a race and learn more about what that entails, type **!race** ***{insert race name here}*** without the curly braces (e.g. **!race Elf**).
-You may also view everything online here: https://www.starjammersrd.com/'''
+You may also view everything online here: <https://www.starjammersrd.com/>'''
 	
 def racePt3(race):
 	return '''If you want to choose **''' + race + '''**, type **!confirm** please! Otherwise, feel free to keep browsing the options with **!race** ***{insert race name here}***'''
@@ -39,7 +39,7 @@ def themePt1():
 	'''
 
 def themePt2():
-	return '''To select a **theme** and learn more about what that entails, type **!theme** ***{insert theme name here}*** without the curly braces, just like before. Again, you may also view everything online at https://www.starjammersrd.com/'''
+	return '''To select a **theme** and learn more about what that entails, type **!theme** ***{insert theme name here}*** without the curly braces, just like before. Again, you may also view everything online at <https://www.starjammersrd.com/>'''
 	
 def themePt3(theme):
 	return '''If you want to choose **''' + theme + '''**, type **!confirm** please! Otherwise, feel free to keep browsing the options with **!theme** ***{insert theme name here}***'''
