@@ -6,3 +6,9 @@ __pycache__
 
 #batch
 *.bat
+
+#user files
+users
+
+#test driver
+testDriver.py
