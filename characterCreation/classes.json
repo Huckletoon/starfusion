@@ -1,13 +1,13 @@
 {
     "envoy": {
-        "shortDesc":"Charismatic people person good at a wide range of skills who inspires allies to accomplish great heroic feats.",
-        "longDesc":"You make your way in the universe with a charming smile, quick wit, and keen sense of self-preservation, and excel at getting others to do what you want. You might be a trickster, hustler, or con artist, or you might serve as an actor, ambassador, or businessperson, paving the way for negotiation through kind words or the occasional dirty trick. You are often the group’s strategist, using your quick wit and tactical acumen to push your friends to greater heights. You may also be skilled in diplomacy, serving as the face for a starship crew, talking your way into restricted systems or gaining audiences with local politicians or warlords.",
+        "short_desc":"Charismatic people person good at a wide range of skills who inspires allies to accomplish great heroic feats.",
+        "long_desc":"You make your way in the universe with a charming smile, quick wit, and keen sense of self-preservation, and excel at getting others to do what you want. You might be a trickster, hustler, or con artist, or you might serve as an actor, ambassador, or businessperson, paving the way for negotiation through kind words or the occasional dirty trick. You are often the group’s strategist, using your quick wit and tactical acumen to push your friends to greater heights. You may also be skilled in diplomacy, serving as the face for a starship crew, talking your way into restricted systems or gaining audiences with local politicians or warlords.",
         "stats":{
-            "maxHp": 6,
-            "stamina": 6
+            "max hp": 6,
+            "max stamina": 6
         },
-        "keyAbilityScore": "charisma",
-        "classSkills": [
+        "key ability score": "charisma",
+        "class skills": [
             "acrobatics",
             "athletics",
             "bluff",
@@ -31,13 +31,13 @@
             "grenades",
             "small arms"
         ],
-        "ranksPerLevel": 8,
-        "savingThrows": {
+        "ranks per level": 8,
+        "saving throws": {
             "fortitude": 0,
             "reflex": 2,
             "will": 2
         },
-        "baseAttackBonus": 0,
+        "base attack bonus": 0,
         "features": {
             "Envoy Improvisation":"As you gain experience, you learn envoy improvisations—little tricks that bolster allies, confound enemies, or change the ebb and flow of battle using guile, inspiration, or luck. See the site for a list of improvisations.\nYou learn your first envoy improvisation at 1st level, and you learn an additional improvisation at 2nd level and every 2 levels thereafter.\nIf an improvisation allows you to grant an effect to an ally, you cannot grant yourself that effect unless the improvisation states otherwise. If an envoy improvisation allows a saving throw to resist its effects or requires an enemy to attempt a skill check, the DC is equal to 10 + half your envoy level + your Charisma modifier.\nSome envoy improvisations are language-dependent, mind-affecting, sense-dependent, or some combination of any or all of these.\nYou learn your first envoy improvisation at 1st level and an additional improvisation at 2nd level and every 2 levels thereafter. Many improvisations require you to have a minimum envoy level, and they are organized accordingly. Some improvisations have additional prerequisites, such as other improvisations.",
             "Expertise":"You are an expert at dealing with challenges that test your skills, be the challenges social or otherwise. At 1st level, when attempting a **Sense Motive** check, you can roll 1d6 (your expertise die) and add the result of the roll to your check as an insight bonus. You can use this and other expertise abilities as long as you have at least 1 Resolve Point remaining.",
@@ -46,14 +46,14 @@
         "link": "https://www.starjammersrd.com/classes/envoy/"
     }, 
     "mechanic": {
-        "shortDesc":"Master of machines and technology whose tinkering produces a drone companion or a powerful brain implant.",
-        "longDesc":"You are a master of machines, from advanced supercomputers to simple magnetic engines. Understanding how these devices work gives you insight into the world around you, allowing you to make the most of your gear, circumvent hardened defenses, and even take over remote systems. Your programming skill also gives you the ability to create a powerful ally, in the form of either an implanted Artificial intelligence or a robotic drone, which can assist you with a variety of tasks.",
+        "short_desc":"Master of machines and technology whose tinkering produces a drone companion or a powerful brain implant.",
+        "long_desc":"You are a master of machines, from advanced supercomputers to simple magnetic engines. Understanding how these devices work gives you insight into the world around you, allowing you to make the most of your gear, circumvent hardened defenses, and even take over remote systems. Your programming skill also gives you the ability to create a powerful ally, in the form of either an implanted Artificial intelligence or a robotic drone, which can assist you with a variety of tasks.",
         "stats":{
-            "maxHp": 6,
-            "stamina": 6
+            "max hp": 6,
+            "max stamina": 6
         },
-        "keyAbilityScore": "intelligence",
-        "classSkills": [
+        "key ability score": "intelligence",
+        "class skills": [
             "athletics",
             "computers",
             "engineering",
@@ -69,13 +69,13 @@
             "grenades",
             "small arms"
         ],
-        "ranksPerLevel": 4,
-        "savingThrows": {
+        "ranks per level": 4,
+        "saving throws": {
             "fortitude": 2,
             "reflex": 2,
             "will": 0
         },
-        "baseAttackBonus": 0,
+        "base attack bonus": 0,
         "features": {
             "Artificial Intelligence":"You construct an Artificial intelligence (or AI), a sophisticated program of self-motivated code that you can access for help in a variety of endeavors. This AI is the product of your own genius, far more advanced and complicated than any available for sale to consumers (though it falls short of being truly self-aware), and only you know the secrets of its creation and operation. Your AI can take one of two forms: a drone or an exocortex. You must pick one of these forms upon taking your first level of mechanic, and once this choice is made, it cannot be changed. These choices are detailed below.",
             "Drone":"You begin play with a powerful robotic drone to house your AI. You build and control this drone, which accompanies you on your adventures and is capable of combat, espionage, and other specialized tasks. As you gain levels, your drone advances in sophistication and gain additional abilities. While the value of your drone is immense, only you, with your extensive knowledge of its quirks and security measures, can ever hope to operate or repair it.",
@@ -86,14 +86,14 @@
         "link": "https://www.starjammersrd.com/classes/mechanic/"
     }, 
     "mystic": {
-        "shortDesc":"Magic user whose mysterious connection to a powerful force grants abilities that break the laws of the universe.",
-        "longDesc":"You understand that what most people call magic is simply an expression of the innate connection between all things, and you intuitively tap into this unseen power to create strange effects. You may conceptualize the source of your magic as divine grace, a manipulation of fundamental energy, or an unlocking of psychic potential, but always with the knowledge that you are a conduit channeling forces greater than yourself.",
+        "short_desc":"Magic user whose mysterious connection to a powerful force grants abilities that break the laws of the universe.",
+        "long_desc":"You understand that what most people call magic is simply an expression of the innate connection between all things, and you intuitively tap into this unseen power to create strange effects. You may conceptualize the source of your magic as divine grace, a manipulation of fundamental energy, or an unlocking of psychic potential, but always with the knowledge that you are a conduit channeling forces greater than yourself.",
         "stats":{
-            "maxHp": 6,
-            "stamina": 6
+            "max hp": 6,
+            "max stamina": 6
         },
-        "keyAbilityScore": "wisdom",
-        "classSkills": [
+        "key ability score": "wisdom",
+        "class skills": [
             "bluff",
             "culture",
             "diplomacy",
@@ -112,13 +112,13 @@
             "basic melee weapons",
             "small arms"
         ],
-        "ranksPerLevel": 6,
-        "savingThrows": {
+        "ranks per level": 6,
+        "saving throws": {
             "fortitude": 0,
             "reflex": 0,
             "will": 2
         },
-        "baseAttackBonus": 0,
+        "base attack bonus": 0,
         "features": {
             "Spells":"You cast spells drawn from the mystic spell list. To learn or cast a spell, you must have a Wisdom score equal to at least 10 + the spell’s level. The Difficulty Class for a saving throw against your spell is 10 + the spell’s level + your Wisdom modifier.\nSpellcasting mechanics are complicated, so we can revisit the specifics later; if you want to know more right away, take a look at the class page online.\nYou can also decipher magical inscriptions that would otherwise be unintelligible or, as a full action, identify any spells encoded in a spell gem as a full action. This does not normally invoke the magic contained within, although it may do so in the case of a Cursed or trapped spell gem.",
             "Connection":"You have a mysterious connection with some force that grants you magical powers. The exact nature of your connection can vary widely, and even mystics who share the same connection may interpret it differently. You must pick one connection upon taking your first level of mystic—once made, this choice can’t be changed.\nMany mystics serve as priests of various gods, and while you can theoretically choose any type of connection with any entity or concept, deities rarely grant connections that don’t fit within their ethos. As such, each connection lists the deities and philosophies commonly associated with it.",
@@ -129,14 +129,14 @@
         "link": "https://www.starjammersrd.com/classes/mystic/"
     }, 
     "operative": {
-        "shortDesc":"Stealthy combatant with wide-ranging know-how who is adept at taking advantage of unprepared foes.",
-        "longDesc":"You’re a shadow. You move swiftly, strike suddenly, and always have an escape plan. You’re a consummate professional, and you always get the job done, whether it’s scouting enemy lines, hunting down criminals, stealing and smuggling items, or assassinating key figures. As an operative, you’re skilled in a wide variety of disciplines and specialties, and use speed, mobility, and your quick wits rather than relying on heavy weapons. You excel at the art of surprise, whether it’s sniping targets from cover or striking while their backs are turned.",
+        "short_desc":"Stealthy combatant with wide-ranging know-how who is adept at taking advantage of unprepared foes.",
+        "long_desc":"You’re a shadow. You move swiftly, strike suddenly, and always have an escape plan. You’re a consummate professional, and you always get the job done, whether it’s scouting enemy lines, hunting down criminals, stealing and smuggling items, or assassinating key figures. As an operative, you’re skilled in a wide variety of disciplines and specialties, and use speed, mobility, and your quick wits rather than relying on heavy weapons. You excel at the art of surprise, whether it’s sniping targets from cover or striking while their backs are turned.",
         "stats":{
-            "maxHp": 6,
-            "stamina": 6
+            "max hp": 6,
+            "max stamina": 6
         },
-        "keyAbilityScore": "dexterity",
-        "classSkills": [
+        "key ability score": "dexterity",
+        "class skills": [
             "acrobatics",
             "athletics",
             "bluff",
@@ -160,13 +160,13 @@
             "small arms",
             "sniper weapons"
         ],
-        "ranksPerLevel": 8,
-        "savingThrows": {
+        "ranks per level": 8,
+        "saving throws": {
             "fortitude": 0,
             "reflex": 2,
             "will": 2
         },
-        "baseAttackBonus": 0,
+        "base attack bonus": 0,
         "features": {
             "Operative’s Edge":"Your diverse training as an operative grants you a +1 insight bonus to initiative checks and to skill checks. This bonus increases by 1 at 3rd level and every 4 levels thereafter.",
             "Specialization":"Your specialization represents your primary area of expertise. Pick one specialization upon taking your 1st level of the operative class. Once made, this choice cannot be changed. Your specialization grants you the Skill Focus feat in your specialization’s associated skills, and you gain a free skill rank in each of those skills at each operative level (this does not allow you to exceed the maximum number of skill ranks in a single skill).",
@@ -175,14 +175,14 @@
         "link": "https://www.starjammersrd.com/classes/operative/"
     }, 
     "solarian": {
-        "shortDesc":"Disciplined warrior whose mastery of the stars grants either a weapon or armor made of stellar power.",
-        "longDesc":"The stars guide the planets with gravity, create life with light and heat, and utterly consume worlds in supernovas and black holes. You understand that these acts of creation and destruction are not opposites, but rather two parts of a natural, dualistic cycle. You seek to be an agent of that cycle, an enlightened warrior with the ability to manipulate the forces of the stars themselves. Constantly accompanied by a mote of fundamental energy or entropy, you can shape this essence in combat to create weapons and armor of gleaming stellar light or pure, devouring darkness.",
+        "short_desc":"Disciplined warrior whose mastery of the stars grants either a weapon or armor made of stellar power.",
+        "long_desc":"The stars guide the planets with gravity, create life with light and heat, and utterly consume worlds in supernovas and black holes. You understand that these acts of creation and destruction are not opposites, but rather two parts of a natural, dualistic cycle. You seek to be an agent of that cycle, an enlightened warrior with the ability to manipulate the forces of the stars themselves. Constantly accompanied by a mote of fundamental energy or entropy, you can shape this essence in combat to create weapons and armor of gleaming stellar light or pure, devouring darkness.",
         "stats":{
-            "maxHp": 7,
-            "stamina": 7
+            "max hp": 7,
+            "max stamina": 7
         },
-        "keyAbilityScore": "charisma",
-        "classSkills": [
+        "key ability score": "charisma",
+        "class skills": [
             "acrobatics",
             "athletics",
             "diplomacy",
@@ -201,13 +201,13 @@
             "advanced melee weapons",
             "small arms"
         ],
-        "ranksPerLevel": 4,
-        "savingThrows": {
+        "ranks per level": 4,
+        "saving throws": {
             "fortitude": 2,
             "reflex": 0,
             "will": 2
         },
-        "baseAttackBonus": 1,
+        "base attack bonus": 1,
         "features": {
             "Skill Adept":"As part of the process that led you to become a solarian, you gained additional insight and training. Choose two additional skills and add them to your list of class skills.",
             "Solar Manifestation":"At 1st level, you gain a physical manifestation of your stellar power. The base form of your Solar Manifestation, when not actively in use, is a mote of stellar energy slightly smaller than your fist that hovers near your head. Beyond the solar mote, your manifestation can take one of two additional forms: armor or a weapon. You must pick one Solar Manifestation (either armor or a weapon) upon taking your first level of solarian. You also choose whether your Solar Manifestation (in any form) either glows brightly with one color common to stars (including blue, red, white, or yellow) or is the perfect darkness of a black hole. A glowing Solar Manifestation, regardless of its form, sheds dim light in a 20-foot radius. You can shut off the light or darkness as a standard action in order to blend in or assist in stealth, but whenever you enter a stellar mode, the glow or darkness returns immediately. Once made, these choices cannot be changed.\nOnly you can interact with your solar manifestation, whether in mote, armor, or weapon form. No other creature or effect can affect your Solar Manifestation in any way, including disarming or sundering it.",
@@ -219,14 +219,14 @@
         "link": "https://www.starjammersrd.com/classes/solarian/"
     }, 
     "soldier": {
-        "shortDesc":"Expert with a huge range of armor, guns, and melee weapons who specializes in certain types of gear.",
-        "longDesc":"Conflict is an inevitable result of life. On every world that harbors complex living organisms, creatures battle one another for dominance, resources, territory, or ideals. Whether you’ve taken up arms to protect others, win glory, exact revenge, or simply earn a living, you are the perfect embodiment of this truth. You’re an expert at combat of all types but tend to prefer heavy armor and weapons—the bigger, the better.",
+        "short_desc":"Expert with a huge range of armor, guns, and melee weapons who specializes in certain types of gear.",
+        "long_desc":"Conflict is an inevitable result of life. On every world that harbors complex living organisms, creatures battle one another for dominance, resources, territory, or ideals. Whether you’ve taken up arms to protect others, win glory, exact revenge, or simply earn a living, you are the perfect embodiment of this truth. You’re an expert at combat of all types but tend to prefer heavy armor and weapons—the bigger, the better.",
         "stats":{
-            "maxHp": 7,
-            "stamina": 7
+            "max hp": 7,
+            "max stamina": 7
         },
-        "keyAbilityScore": "strength, dexterity",
-        "classSkills": [
+        "key ability score": "strength, dexterity",
+        "class skills": [
             "acrobatics",
             "athletics",
             "engineering",
@@ -248,13 +248,13 @@
             "sniper weapons",
             "grenades"
         ],
-        "ranksPerLevel": 4,
-        "savingThrows": {
+        "ranks per level": 4,
+        "saving throws": {
             "fortitude": 2,
             "reflex": 0,
             "will": 2
         },
-        "baseAttackBonus": 1,
+        "base attack bonus": 1,
         "features": {
             "Primary Fighting Style":"You have a preferred fighting style that represents the type of soldier you are. Each fighting style is composed of various style techniques that you learn as you gain experience. You must pick one fighting style upon taking your first soldier level, and once made, this choice cannot be changed.",
             "Primary Style Technique":"At 1st level and every 4 levels thereafter, you gain a style technique unique to your primary fighting style."
@@ -262,14 +262,14 @@
         "link": "https://www.starjammersrd.com/classes/soldier/"
     }, 
     "technomancer": {
-        "shortDesc":"Magic user who is preternaturally attuned to technology and can use it to unlock powerful effects.",
-        "longDesc":"To the uninitiated, magic and technology are completely unrelated, but you know there are more correlations between the two than most suspect. Magic and technology are just tools, and when combined into one discipline, called technomancy, they can be far more powerful than one or the other on its own. You utilize tech to empower, harness, and manipulate magic, and you wield magic to augment, control, and modify technology. You are an expert at hacking the underlying structure of the universe itself, bending the laws of science and nature to your will. Your technomancy—which is gained from scientific study and experimentation—manipulates the physical world, weaves illusions, allows you to peer through time and space, and if necessary, can blast a foe into atoms.",
+        "short_desc":"Magic user who is preternaturally attuned to technology and can use it to unlock powerful effects.",
+        "long_desc":"To the uninitiated, magic and technology are completely unrelated, but you know there are more correlations between the two than most suspect. Magic and technology are just tools, and when combined into one discipline, called technomancy, they can be far more powerful than one or the other on its own. You utilize tech to empower, harness, and manipulate magic, and you wield magic to augment, control, and modify technology. You are an expert at hacking the underlying structure of the universe itself, bending the laws of science and nature to your will. Your technomancy—which is gained from scientific study and experimentation—manipulates the physical world, weaves illusions, allows you to peer through time and space, and if necessary, can blast a foe into atoms.",
         "stats":{
-            "maxHp": 5,
-            "stamina": 5
+            "max hp": 5,
+            "max stamina": 5
         },
-        "keyAbilityScore": "intelligence",
-        "classSkills": [
+        "key ability score": "intelligence",
+        "class skills": [
             "computers",
             "engineering",
             "life science",
@@ -284,13 +284,13 @@
             "basic melee weapons",
             "small arms"
         ],
-        "ranksPerLevel": 4,
-        "savingThrows": {
+        "ranks per level": 4,
+        "saving throws": {
             "fortitude": 0,
             "reflex": 2,
             "will": 2
         },
-        "baseAttackBonus": 0,
+        "base attack bonus": 0,
         "features": {
             "Spells":"You cast spells drawn from the technomancer spell list. To learn or cast a spell, you must have an Intelligence score equal to at least 10 + the spell’s level. The Difficulty Class for a saving throw against your spell is 10 + the spell’s level + your Intelligence modifier.\nSpellcasting mechanics are complicated, so we can revisit the specifics later; if you want to know more right away, take a look at the class page online.\nYou can also decipher magical inscriptions that would otherwise be unintelligible or, as a full action, identify any spells encoded in a spell gem. This does not normally invoke the magic contained within, although it may do so in the case of a Cursed or trapped spell gem.",
             "Spell Cache":"As the culmination of your early study of the fundamental forces of the galaxy, you have created a spell cache that allows you to store and access spells. Your spell cache could be a device such as a handheld computer or technological implant; an item such as a ring or staff; or a symbol such as a brand, tattoo, or other permanent modification to your body. While you don’t need your spell cache to cast your spells, once per day, you can activate your spell cache to cast any one spell you know and are capable of casting, even if you’ve expended all your spell slots for that spell’s level.\nIf your spell cache is damaged, it is restored to full Hit Points the next time you prepare spells. If the spell cache is lost or destroyed, you can replace it after 1 week with a special ritual that takes 8 hours to complete."

@@ -1,14 +1,14 @@
 {
     "ace pilot": {
-        "shortDesc": "Skillful operator of starships and other vehicles who is obsessed with all related knowledge and lore.",
-        "longDesc": "You are most comfortable at the controls of a vehicle, whether it's a starship racing through the inky void of space or a ground vehicle zooming between trees, around boulders, and across dusty badlands. You might be a member of an elite military force, the recipient of intense courses of training. Alternatively, you might be a total amateur with innate skills that make you a much-admired hotshot.",
+        "short_desc": "Skillful operator of starships and other vehicles who is obsessed with all related knowledge and lore.",
+        "long_desc": "You are most comfortable at the controls of a vehicle, whether it's a starship racing through the inky void of space or a ground vehicle zooming between trees, around boulders, and across dusty badlands. You might be a member of an elite military force, the recipient of intense courses of training. Alternatively, you might be a total amateur with innate skills that make you a much-admired hotshot.",
         "stats": {
             "dexterity":"1"
         },
         "features": {
             "Theme Knowledge": {
                 "level": 1,
-                "description": "Reduce the DC of **Culture** checks to recall knowledge about starship and vehicle models and parts as well as famous hotshot pilots by 5. **Piloting** is a class skill for you, though if it is a class skill from the class you take at 1st level, you instead gain a +1 bonus to your Piloting checks."
+                "description": "Gain a +5 bonus to **Culture** checks to recall knowledge about starship and vehicle models and parts as well as famous hotshot pilots. **Piloting** is a class skill for you, though if it is a class skill from the class you take at 1st level, you instead gain a +1 bonus to your Piloting checks."
             },
             "Lone Wolf": {
                 "level": 6,
@@ -25,15 +25,15 @@
         }
     },
     "bounty hunter": {
-        "shortDesc": "Unstoppable tracker who knows how to stay hot on the trail of those who flee.",
-        "longDesc": "You track people down for money. It is a dangerous profession, as most of your targets understandably don't wish to be caught. You wouldn't have it any other way. You might have a code of ethics, never taking jobs that, say, target children or members of your own race. You might hunt down only escaped criminals. Or you might be completely amoral, taking any job that comes along - for the right price, of course.",
+        "short_desc": "Unstoppable tracker who knows how to stay hot on the trail of those who flee.",
+        "long_desc": "You track people down for money. It is a dangerous profession, as most of your targets understandably don't wish to be caught. You wouldn't have it any other way. You might have a code of ethics, never taking jobs that, say, target children or members of your own race. You might hunt down only escaped criminals. Or you might be completely amoral, taking any job that comes along - for the right price, of course.",
         "stats": {
             "constitution":"1"
         },
         "features": {
             "Theme Knowledge": {
                 "level": 1,
-                "description": "Choose a specific sentient creature that you can identify by name, alias, or specific identity to be your mark. Reduce the DC of **Culture** or **Profession(Bounty Hunter)** checks to recall knowledge about your mark, as well as to recall knowledge about law-enforcement individuals and practices, by 5. If you choose a mark that is known only by an alias or secred identity, this ability helps you learn facts only about the identity you know about, not any other unknown identities. Once you defeat your mark, as an action that takes 1 minute, you can study dossiers and database information about another individual to be your new mark. You can instead abandon your mark for a new one without defeating it, but if you do so, you take a -2 penalty to all skill checks for 1 week.\n**Survival** is a class skill for you, though if it is a class skill from the class you take, you instead gain a +1 bonus to **Survival** checks."
+                "description": "Choose a specific sentient creature that you can identify by name, alias, or specific identity to be your mark. Gain a +5 bonus to **Culture** or **Profession(Bounty Hunter)** checks to recall knowledge about your mark, as well as to recall knowledge about law-enforcement individuals and practices. If you choose a mark that is known only by an alias or secred identity, this ability helps you learn facts only about the identity you know about, not any other unknown identities. Once you defeat your mark, as an action that takes 1 minute, you can study dossiers and database information about another individual to be your new mark. You can instead abandon your mark for a new one without defeating it, but if you do so, you take a -2 penalty to all skill checks for 1 week.\n**Survival** is a class skill for you, though if it is a class skill from the class you take, you instead gain a +1 bonus to **Survival** checks."
             },
             "Swift Hunter": {
                 "level": 6,
@@ -50,15 +50,15 @@
         }
     },
     "icon": {
-        "shortDesc": "Popular and respected celebrity who can leverage the public's adoration for specific needs.",
-        "longDesc": "Thanks to interstellar transmissions and Drift travel, the galaxy is smaller than ever, and this connectivity has facilitated your ascension to celebrity status. You might be a famous performer or a celebrated scientist, but either way, you get recognized on the Pact Worlds and in associated systems. Your reason for traveling to unknown worlds might be to further spread your acclaim or to escape the limelight.",
+        "short_desc": "Popular and respected celebrity who can leverage the public's adoration for specific needs.",
+        "long_desc": "Thanks to interstellar transmissions and Drift travel, the galaxy is smaller than ever, and this connectivity has facilitated your ascension to celebrity status. You might be a famous performer or a celebrated scientist, but either way, you get recognized on the Pact Worlds and in associated systems. Your reason for traveling to unknown worlds might be to further spread your acclaim or to escape the limelight.",
         "stats": {
             "charisma":"1"
         },
         "features": {
             "Theme Knowledge": {
                 "level": 1,
-                "description": "Choose a **Profession** skill. You are hooked deeply into the culture of your iconic profession. When attempting a **Profession** or **Culture** check to recall knowledge about other icons of your profession or details about your profession's cultural aspects, reduce the DC by 5. You gain a +1 bonus to checks with your chosen **Profession** skill. **Culture** also becomes a class skill for you, though if it is a class skill from the class you take, you instead gain a +1 bonus to **Culture** checks."
+                "description": "Choose a **Profession** skill. You are hooked deeply into the culture of your iconic profession. When attempting a **Profession** or **Culture** check to recall knowledge about other icons of your profession or details about your profession's cultural aspects, gain a +5 bonus. You gain a +1 bonus to checks with your chosen **Profession** skill. **Culture** also becomes a class skill for you, though if it is a class skill from the class you take, you instead gain a +1 bonus to **Culture** checks."
             },
             "Celebrity": {
                 "level": 6,
@@ -75,8 +75,8 @@
         }
     },
     "mercenary": {
-        "shortDesc": "Well-trained soldier of fortune who can work equally well as a combat grunt or a squad leader.",
-        "longDesc": "Whether you take jobs that match your ethical beliefs or you fight for anyone who can afford your services, you are a hired gun. You might take pride in your past accomplishments, proudly displaying trophies of your kills, or you might be laden with guilt over being the sole survivor of a mission gone terribly wrong. You most likely work with other mercenaries and are familiar with the methodologies of military actions all across the galaxy.",
+        "short_desc": "Well-trained soldier of fortune who can work equally well as a combat grunt or a squad leader.",
+        "long_desc": "Whether you take jobs that match your ethical beliefs or you fight for anyone who can afford your services, you are a hired gun. You might take pride in your past accomplishments, proudly displaying trophies of your kills, or you might be laden with guilt over being the sole survivor of a mission gone terribly wrong. You most likely work with other mercenaries and are familiar with the methodologies of military actions all across the galaxy.",
         "stats": {
             "strength":"1"
         },
@@ -100,8 +100,8 @@
         }
     },
     "outlaw": {
-        "shortDesc": "Wanted criminal with back-alley connections to black markets and associates who can fend off legal trouble.",
-        "longDesc": "Due to the sins of your past or your current unlawful behavior, you are a wanted individual somewhere in the Pact Worlds. You might not even be guilty and are striving to clear your good name. Or you might fully admit to being a criminal but believe the laws you break are unjust. Whatever the case, boarding a starship headed to the Vast might be just the thing you need until the heat dies down - or until you're dragged off to prison.",
+        "short_desc": "Wanted criminal with back-alley connections to black markets and associates who can fend off legal trouble.",
+        "long_desc": "Due to the sins of your past or your current unlawful behavior, you are a wanted individual somewhere in the Pact Worlds. You might not even be guilty and are striving to clear your good name. Or you might fully admit to being a criminal but believe the laws you break are unjust. Whatever the case, boarding a starship headed to the Vast might be just the thing you need until the heat dies down - or until you're dragged off to prison.",
         "stats": {
             "dexterity":"1"
         },
@@ -125,8 +125,8 @@
         }
     },
     "priest": {
-        "shortDesc": "Dedicated and knowledgeable adherent to a philosophy or religion who commands clout among other followers.",
-        "longDesc": "You are a member of an organized religion or similar association. Your belief, whether it has been a part of you since childhood or it came to you later in life, is an integral part of your character. You m ight travel the stars proselytizing your deity, or your church might have sent you out on a specific holy (or unholy) mission. No matter what obstacles life puts in your way, you always have the conviction of your beliefs to fall back on.",
+        "short_desc": "Dedicated and knowledgeable adherent to a philosophy or religion who commands clout among other followers.",
+        "long_desc": "You are a member of an organized religion or similar association. Your belief, whether it has been a part of you since childhood or it came to you later in life, is an integral part of your character. You m ight travel the stars proselytizing your deity, or your church might have sent you out on a specific holy (or unholy) mission. No matter what obstacles life puts in your way, you always have the conviction of your beliefs to fall back on.",
         "stats": {
             "wisdom":"1"
         },
@@ -150,8 +150,8 @@
         }
     },
     "scholar": {
-        "shortDesc": "Skilled researcher and cutting-edge thinker with a broad base of knowledge and a thirst to expand it.",
-        "longDesc": "You are an erudite intellectual, pitting your brain against problems and puzzles that others would find daunting. You might be an instructor of a specific topic at a large university or a dabbler in a number of fields of study. You could be exploring the galaxy in search of ancient artifacts or new scientific phenomena. Whatever your motivation, you are sure that the answers you seek are out there.",
+        "short_desc": "Skilled researcher and cutting-edge thinker with a broad base of knowledge and a thirst to expand it.",
+        "long_desc": "You are an erudite intellectual, pitting your brain against problems and puzzles that others would find daunting. You might be an instructor of a specific topic at a large university or a dabbler in a number of fields of study. You could be exploring the galaxy in search of ancient artifacts or new scientific phenomena. Whatever your motivation, you are sure that the answers you seek are out there.",
         "stats": {
             "intelligence":"1"
         },
@@ -175,8 +175,8 @@
         }
     },
     "spacefarer": {
-        "shortDesc": "Restless explorer who has a strong intuition and has collected deep knowledge about alien biology and topology.",
-        "longDesc": "Your longing to journey among the stars can't be sated. You yearn for the adventure of stepping onto a distant world and exploring its secrets. You tend to greet every new opportunity with bravery and fortitude, confident that your multitude of skills will pull you through. Perhaps you simply find joy in the act of traveling with your companions, or perhaps you are just out to line your pockets with all sorts of alien loot!",
+        "short_desc": "Restless explorer who has a strong intuition and has collected deep knowledge about alien biology and topology.",
+        "long_desc": "Your longing to journey among the stars can't be sated. You yearn for the adventure of stepping onto a distant world and exploring its secrets. You tend to greet every new opportunity with bravery and fortitude, confident that your multitude of skills will pull you through. Perhaps you simply find joy in the act of traveling with your companions, or perhaps you are just out to line your pockets with all sorts of alien loot!",
         "stats": {
             "constitution":"1"
         },
@@ -200,8 +200,8 @@
         }
     },
     "xenoseeker": {
-        "shortDesc": "Guru of alien life-forms who finds that meeting them is one of life's most rewarding accomplishments.",
-        "longDesc": "The thought of meeting alien life-forms excites you. The more different their appearances and customs are from yours, the better! You either believe they have much to teach you or you want to prove you are better than them. Of course, the only way to accomplish your goal is to leave the Pact Worlds and travel to the Vast, where a virtually endless number of aliens await.",
+        "short_desc": "Guru of alien life-forms who finds that meeting them is one of life's most rewarding accomplishments.",
+        "long_desc": "The thought of meeting alien life-forms excites you. The more different their appearances and customs are from yours, the better! You either believe they have much to teach you or you want to prove you are better than them. Of course, the only way to accomplish your goal is to leave the Pact Worlds and travel to the Vast, where a virtually endless number of aliens await.",
         "stats": {
             "charisma":"1"
         },
@@ -225,8 +225,8 @@
         }
     },
     "themeless": {
-        "shortDesc": "One who doesn't fit into any niche above but forges a personal path of determination and training.",
-        "longDesc": "You don't fit neatly into any of the above categories, or you see yourself as a blank slate. A themeless character is considerably less powerful than a character with a theme, so take care if choosing this option!",
+        "short_desc": "One who doesn't fit into any niche above but forges a personal path of determination and training.",
+        "long_desc": "You don't fit neatly into any of the above categories, or you see yourself as a blank slate. A themeless character is considerably less powerful than a character with a theme, so take care if choosing this option!",
         "features": {
             "General Knowledge": {
                 "level": 1,
