@@ -6,10 +6,13 @@ import os
 import random
 import re
 import string
+import sys
 
 import block_of_text
 
 from packages.squirrel3 import squirrel3
+
+BLANK = '<:blank:894263650825670698>'
 
 MSG_CHAR_LIMIT = 2000
 MSG_CHAR_THRESHOLD = 1500
@@ -196,6 +199,27 @@ class MyClient(discord.Client):
 		
 		return messages
 
+	#TODO
+	def build_character_sheet(self, id):
+		builder = ''
+		messages = []
+		data = session_data[id]
+
+		builder += f"**{data['name']}** - {string.capwords(data['race'])} {string.capwords(data['theme'])}\nLvl {data['level']} {string.capwords(data['class'])}\n"
+		builder += f":yellow_heart: **Stamina:** {data['current stamina']} / {data['max stamina']}\n:heart: **HP:** {data['current hp']} / {data['max hp']}\n:zap: **Resolve:** {data['current resolve']} / {data['max resolve']}\n:shield: **KAC**: {data['kac']} {BLANK} **EAC**: {data['eac']}\n{string.capwords(data['size'])} {string.capwords(data['type'])}\n\n"
+		builder += f":muscle: Strength: {data['strength']}\n"
+		builder += f":cartwheel: Dexterity: {data['dexterity']}\n"
+		builder += f":anatomical_heart: Constitution: {data['constitution']}\n"
+		builder += f":brain: Intelligence: {data['intelligence']}\n"
+		builder += f":mag: Wisdom: {data['wisdom']}\n"
+		builder += f":sunglasses: Charisma: {data['charisma']}\n"
+		messages.append(builder)
+		builder = ''
+
+		
+
+		return messages
+
 	#------------------------------#
 	#---  Get Overview methods  ---#
 	#------------------------------#
@@ -324,11 +348,14 @@ class MyClient(discord.Client):
 			async for member in guild.fetch_members():
 				if member.id not in session_data:
 					session_data[member.id] = dict()
+					session_data[member.id]['name'] = 'N/A'
+					session_data[member.id]['level'] = 0
+					session_data[member.id]['alignment'] = 'N'
 					session_data[member.id]['state'] = 0
 					session_data[member.id]['substate'] = 0
-					session_data[member.id]['race'] = ''
-					session_data[member.id]['theme'] = ''
-					session_data[member.id]['class'] = ''
+					session_data[member.id]['race'] = 'r'
+					session_data[member.id]['theme'] = 't'
+					session_data[member.id]['class'] = 'c'
 					session_data[member.id]['strength'] = 10
 					session_data[member.id]['dexterity'] = 10
 					session_data[member.id]['constitution'] = 10
@@ -343,7 +370,8 @@ class MyClient(discord.Client):
 					session_data[member.id]['max hp'] = 0
 					session_data[member.id]['current stamina'] = 0
 					session_data[member.id]['current hp'] = 0
-					session_data[member.id]['key ability score'] = ''
+					session_data[member.id]['current resolve'] = 0
+					session_data[member.id]['key ability score'] = 'n'
 					session_data[member.id]['eac'] = 10
 					session_data[member.id]['kac'] = 10
 					session_data[member.id]['needs race choice'] = False
@@ -370,7 +398,7 @@ class MyClient(discord.Client):
 					session_data[member.id]['feats'] = {}
 					session_data[member.id]['traits'] = {}
 					session_data[member.id]['triggered traits'] = {}
-					session_data[member.id]['speed'] = 30
+					session_data[member.id]['speed'] = 0
 
 					
 					for skill in ALL_SKILLS:
@@ -411,6 +439,8 @@ class MyClient(discord.Client):
 		if command == 'save':
 			save_session_data()
 			return
+		if command == 'quit':
+			sys.exit()
 
 		#--------------------------------#
 		#---  List character options  ---#
@@ -431,6 +461,11 @@ class MyClient(discord.Client):
 				await message.channel.send(msg)
 			return
 			
+		if command == 'character':
+			for msg in self.build_character_sheet(user_id):
+				await message.channel.send(msg)
+			return
+
 		#--------------------------#
 		#---  Rolling Commands  ---#
 		#--------------------------#
@@ -585,25 +620,26 @@ class MyClient(discord.Client):
 						race_data = self.races[session_data[user_id]['race']]
 						theme_data = self.themes[session_data[user_id]['theme']]
 						class_data = self.classes[session_data[user_id]['class']]
-						if race_data['choices']:
+						if 'choices' in race_data:
 							session_data[user_id]['needsracechoice'] = True
-						if theme_data['choices']:
+						if 'choices' in theme_data:
 							session_data[user_id]['needsthemechoice'] = True
-						if class_data['choices']: #TODO: implement in classes.json
+						if 'choices' in class_data: #TODO: implement in classes.json
 							session_data[user_id]['needsclasschoice'] = True
 						
 						#Apply stats - Race
-						#TODO: Refactor based on json
 						for stat in race_data['stats']:
 							session_data[user_id][stat] += race_data['stats'][stat]
 						for trait in race_data['traits']:
+							session_data[user_id]['traits'][trait] = race_data['traits'][trait]
 							for entry in race_data['traits'][trait]:
 								valid = not race_data['traits'][trait]['manual'] and (entry != 'desc' and entry != 'manual')
-								#TODO: is_dict()?
-								#if valid and entry != 'skills':
-								#	session_data[user_id][entry] 
-						#TODO:
-						#	- traits
+								
+								if isinstance(race_data['traits'][trait][entry], dict) and valid:
+									for modification in race_data['traits'][trait][entry]:
+										session_data[user_id][entry][modification]['misc modifiers'] += race_data['traits'][trait][entry][modification]
+								elif valid:
+									session_data[user_id][entry] += race_data['traits'][trait][entry]
 						
 						#Apply stats - Theme #TODO: Refactor
 						for stat in theme_data['stats']:
