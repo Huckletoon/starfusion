@@ -1,6 +1,13 @@
+###########
+# IMPORTS #
+###########
+from email import message
 from dotenv import load_dotenv
+import asyncio
+import datetime
 import discord
 import json
+import logging
 import math
 import os
 import random
@@ -8,14 +15,78 @@ import re
 import string
 import sys
 
+#########
+# LOCAL #
+#########
 import block_of_text
-
 from packages.squirrel3 import squirrel3
 
+#############
+# CONSTANTS #
+#############
 BLANK = '<:blank:894263650825670698>'
-
+BLANK_ID = 894263650825670698
+GAMEMASTER = 187346007837638657
+ROLL_CHANNEL = 864933210265616404
+LOG_CHANNEL = 1015611632136753274
 MSG_CHAR_LIMIT = 2000
 MSG_CHAR_THRESHOLD = 1500
+PERSONAL_CHANNEL = 'personal_channel'
+STR_EMOTE = '💪'
+DEX_EMOTE = '💃'
+CON_EMOTE = '❤️'
+WIS_EMOTE = '🧐'
+INT_EMOTE = '🤓'
+CHA_EMOTE = '😎'
+DIE_EMOTE = '🎲'
+ACROBATICS_EMOTE = '🤸'
+ATHLETICS_EMOTE = '🏃'
+BLUFF_EMOTE = '😏'
+COMPUTERS_EMOTE = '💻'
+CULTURE_EMOTE = '🛐'
+DIPLOMACY_EMOTE = '🤝'
+DISGUISE_EMOTE = '🕵️'
+ENGINEERING_EMOTE = '🔧'
+INTIMIDATE_EMOTE = '😡'
+LIFE_SCIENCE_EMOTE = '🌿'
+MEDICINE_EMOTE = '🩺'
+MYSTICISM_EMOTE = '🧙'
+PERCEPTION_EMOTE = '👁️'
+PHYSICAL_SCIENCE_EMOTE = '🌦️'
+PILOTING_EMOTE = '✈️'
+PROFESSION_EMOTE = '✍️'
+SENSE_MOTIVE_EMOTE = '🤨'
+SLEIGHT_OF_HAND_EMOTE = '🤹'
+STEALTH_EMOTE = '🤫'
+SURVIVAL_EMOTE = '⛺'
+EMOTE_MAP = {
+	STR_EMOTE: 'strength',
+	DEX_EMOTE: 'dexterity',
+	CON_EMOTE: 'constitution',
+	WIS_EMOTE: 'wisdom',
+	INT_EMOTE: 'intelligence',
+	CHA_EMOTE: 'charisma',
+	ACROBATICS_EMOTE: 'acrobatics',
+	ATHLETICS_EMOTE: 'athletics',
+	BLUFF_EMOTE: 'bluff',
+	COMPUTERS_EMOTE: 'computers',
+	CULTURE_EMOTE: 'culture',
+	DIPLOMACY_EMOTE: 'diplomacy',
+	DISGUISE_EMOTE: 'disguise',
+	ENGINEERING_EMOTE: 'engineering',
+	INTIMIDATE_EMOTE: 'intimidate',
+	LIFE_SCIENCE_EMOTE: 'life science',
+	MEDICINE_EMOTE: 'medicine',
+	MYSTICISM_EMOTE: 'mysticism',
+	PERCEPTION_EMOTE: 'perception',
+	PHYSICAL_SCIENCE_EMOTE: 'physical science',
+	PILOTING_EMOTE: 'piloting',
+	PROFESSION_EMOTE: 'profession',
+	SENSE_MOTIVE_EMOTE: 'sense motive',
+	SLEIGHT_OF_HAND_EMOTE: 'sleight of hand',
+	STEALTH_EMOTE: 'stealth',
+	SURVIVAL_EMOTE: 'survival',
+}
 TRAINED_SKILLS = [
 	'computers',
 	'culture',
@@ -80,6 +151,9 @@ session_data = {}
 # 13 = Character exists
 '''
 
+def get_modifier(score):
+	return (score - 10) // 2
+
 def save_session_data():
 	for user in session_data:
 		data = json.dumps(session_data[user], indent=4)
@@ -104,6 +178,76 @@ def load_session_data():
 			print(f'User data {user_data_dir+file} loaded successfully!')
 		except Exception as e:
 			print(f'ERROR: User data {user_file_name} failed to load: {e}')
+
+async def init_session_data(guilds):
+	for guild in guilds:
+		print('Logged into guildID: {0}'.format(guild.id))
+		async for member in guild.fetch_members():
+			if member.id not in session_data:
+				session_data[member.id] = dict()
+				session_data[member.id]['player_name'] = member.display_name
+				session_data[member.id]['name'] = 'N/A'
+				session_data[member.id]['level'] = 0
+				session_data[member.id]['alignment'] = 'N'
+				session_data[member.id]['state'] = 0
+				session_data[member.id]['substate'] = 0
+				session_data[member.id]['race'] = 'r'
+				session_data[member.id]['theme'] = 't'
+				session_data[member.id]['class'] = 'c'
+				session_data[member.id]['strength'] = 10
+				session_data[member.id]['dexterity'] = 10
+				session_data[member.id]['constitution'] = 10
+				session_data[member.id]['intelligence'] = 10
+				session_data[member.id]['wisdom'] = 10
+				session_data[member.id]['charisma'] = 10
+				session_data[member.id]['size'] = ''
+				session_data[member.id]['type'] = ''
+				session_data[member.id]['ability points'] = 10
+				session_data[member.id]['max resolve'] = 0
+				session_data[member.id]['max stamina'] = 0
+				session_data[member.id]['max hp'] = 0
+				session_data[member.id]['current stamina'] = 0
+				session_data[member.id]['current hp'] = 0
+				session_data[member.id]['current resolve'] = 0
+				session_data[member.id]['key ability score'] = 'n'
+				session_data[member.id]['eac'] = 10
+				session_data[member.id]['kac'] = 10
+				session_data[member.id]['needs race choice'] = False
+				session_data[member.id]['needs theme choice'] = False
+				session_data[member.id]['needs class choice'] = False
+				session_data[member.id]['skills'] = {}
+				session_data[member.id]['saving throws'] = {
+					'will': {
+						'ability': 'wisdom',
+						'misc modifiers': 0
+					},
+					'reflex': {
+						'ability': 'dexterity',
+						'misc modifiers': 0
+					},
+					'fortitude': {
+						'ability': 'constitution',
+						'misc modifiers': 0
+					}
+				}
+				session_data[member.id]['proficiencies'] = []
+				session_data[member.id]['ranks per level'] = 0
+				session_data[member.id]['base attack bonus'] = 0
+				session_data[member.id]['feats'] = {}
+				session_data[member.id]['traits'] = {}
+				session_data[member.id]['triggered traits'] = {}
+				session_data[member.id]['speed'] = 0
+
+				
+				for skill in ALL_SKILLS:
+					session_data[member.id]['skills'][skill] = {
+						'ranks': 0,
+						'class skill': False,
+						'ability': ALL_SKILLS[skill],
+						'misc modifiers': 0
+					}
+			elif 'player_name' not in session_data[member.id]:
+				session_data[member.id]['player_name'] = member.display_name
 
 def validate_token(token):
 	for pattern in patterns:
@@ -147,11 +291,26 @@ def roll_dice(command, rng):
 
 	return components
 
+def extract_rolls(content):
+	rolls = content.split(DIE_EMOTE)
+	if len(rolls) == 1:
+		return []
+	else:
+		for x in range(len(rolls)):
+			rolls[x] = rolls[x].strip()
+		return rolls[1:]
+
 
 #------------------------#
 #---  Discord Client  ---#
 #------------------------#
 class MyClient(discord.Client):
+
+	#-----------------#
+	#---  Logging  ---#
+	#-----------------#
+	async def logMessage(self, message):
+		await self.log_channel.send(message)
 
 	#----------------------------------#
 	#---  List Information methods  ---#
@@ -245,6 +404,7 @@ class MyClient(discord.Client):
 			builder += "\n**Additional Choices**\n========================================\n"
 			for choice in self.races[race]['choices']:
 				for option in self.races[race]['choices'][choice]:
+					print(f'choice: {choice}\n|--option: {option}')
 					builder += f"**{string.capwords(option)}**\n{self.races[race]['choices'][choice][option]['description']}\n"
 					if len(builder) >= MSG_CHAR_THRESHOLD:
 						messages.append(builder)
@@ -336,78 +496,15 @@ class MyClient(discord.Client):
 	async def on_ready(self):
 		print('Logged on as {0}!'.format(self.user))
 		print('Self ID: {0}'.format(self.user.id))
+		self.roll_channel = await self.fetch_channel(ROLL_CHANNEL)
+		self.log_channel = await self.fetch_channel(LOG_CHANNEL)
 		
-
-		self.rng = squirrel3.Squirrel3Random(random.Random(self.user.id))
-		self.rng.seed(self.user.id)
+		self.rng = squirrel3.Squirrel3Random(random.Random(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+		self.rng.seed(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 		load_session_data()
 
 		#initialize session data for each user
-		for guild in self.guilds:
-			print('Logged into guildID: {0}'.format(guild.id))
-			async for member in guild.fetch_members():
-				if member.id not in session_data:
-					session_data[member.id] = dict()
-					session_data[member.id]['name'] = 'N/A'
-					session_data[member.id]['level'] = 0
-					session_data[member.id]['alignment'] = 'N'
-					session_data[member.id]['state'] = 0
-					session_data[member.id]['substate'] = 0
-					session_data[member.id]['race'] = 'r'
-					session_data[member.id]['theme'] = 't'
-					session_data[member.id]['class'] = 'c'
-					session_data[member.id]['strength'] = 10
-					session_data[member.id]['dexterity'] = 10
-					session_data[member.id]['constitution'] = 10
-					session_data[member.id]['intelligence'] = 10
-					session_data[member.id]['wisdom'] = 10
-					session_data[member.id]['charisma'] = 10
-					session_data[member.id]['size'] = ''
-					session_data[member.id]['type'] = ''
-					session_data[member.id]['ability points'] = 10
-					session_data[member.id]['max resolve'] = 0
-					session_data[member.id]['max stamina'] = 0
-					session_data[member.id]['max hp'] = 0
-					session_data[member.id]['current stamina'] = 0
-					session_data[member.id]['current hp'] = 0
-					session_data[member.id]['current resolve'] = 0
-					session_data[member.id]['key ability score'] = 'n'
-					session_data[member.id]['eac'] = 10
-					session_data[member.id]['kac'] = 10
-					session_data[member.id]['needs race choice'] = False
-					session_data[member.id]['needs theme choice'] = False
-					session_data[member.id]['needs class choice'] = False
-					session_data[member.id]['skills'] = {}
-					session_data[member.id]['saving throws'] = {
-						'will': {
-							'ability': 'wisdom',
-							'misc modifiers': 0
-						},
-						'reflex': {
-							'ability': 'dexterity',
-							'misc modifiers': 0
-						},
-						'fortitude': {
-							'ability': 'constitution',
-							'misc modifiers': 0
-						}
-					}
-					session_data[member.id]['proficiencies'] = []
-					session_data[member.id]['ranks per level'] = 0
-					session_data[member.id]['base attack bonus'] = 0
-					session_data[member.id]['feats'] = {}
-					session_data[member.id]['traits'] = {}
-					session_data[member.id]['triggered traits'] = {}
-					session_data[member.id]['speed'] = 0
-
-					
-					for skill in ALL_SKILLS:
-						session_data[member.id]['skills'][skill] = {
-							'ranks': 0,
-							'class skill': False,
-							'ability': ALL_SKILLS[skill],
-							'misc modifiers': 0
-						}
+		await init_session_data(self.guilds)
 					
 		#initialize character option data
 		self.races = json.load(open('characterCreation/races.json', 'r', encoding='utf-8'))
@@ -431,12 +528,13 @@ class MyClient(discord.Client):
 		# DEBUG
 		#
 		if command == 'members':
-			print(session_data)
+			await self.logMessage(session_data)
 			return
 		if command == 'purge':
 			await message.channel.purge()
 			return
 		if command == 'save':
+			await init_session_data(self.guilds)
 			save_session_data()
 			return
 		if command == 'quit':
@@ -465,6 +563,21 @@ class MyClient(discord.Client):
 			for msg in self.build_character_sheet(user_id):
 				await message.channel.send(msg)
 			return
+		
+		if command == 'register':
+			channel = message.channel.id
+			user = message.author.id
+			if user in session_data and PERSONAL_CHANNEL not in session_data[user]:
+				session_data[user][PERSONAL_CHANNEL] = channel
+				await message.channel.send("Channel registered for "+message.author.display_name)
+			elif user not in session_data:
+				await init_session_data(self.guilds)
+				session_data[user][PERSONAL_CHANNEL] = channel
+				await message.channel.send("Channel registered for "+message.author.display_name)
+			else:
+				await self.logMessage(f'@= user {message.author.display_name} already has channel {message.channel.name} registered.')			
+			save_session_data()
+
 
 		#--------------------------#
 		#---  Rolling Commands  ---#
@@ -472,7 +585,7 @@ class MyClient(discord.Client):
 		if command.startswith('r ') or command.startswith('roll '):
 			try:
 				outcome = roll_dice(command, self.rng)
-				print(outcome)
+				await self.logMessage(outcome)
 				total = 0
 				message_text = ''
 				for roll in outcome:
@@ -511,7 +624,7 @@ class MyClient(discord.Client):
 				message_text = f'**{total}** ||= (' + message_text + ')||'
 				await message.channel.send(message_text)
 			except Exception as e:
-				print(f'invalid roll: {command} - {e}')
+				await self.logMessage(f'invalid roll: {command} - {e}')
 				await message.channel.send(f"That's not a valid roll!\n"
 									f"Attempted: {command}\n"
 									f"Error: {e}")
@@ -634,7 +747,7 @@ class MyClient(discord.Client):
 							session_data[user_id]['traits'][trait] = race_data['traits'][trait]
 							for entry in race_data['traits'][trait]:
 								valid = not race_data['traits'][trait]['manual'] and (entry != 'desc' and entry != 'manual')
-								
+
 								if isinstance(race_data['traits'][trait][entry], dict) and valid:
 									for modification in race_data['traits'][trait][entry]:
 										session_data[user_id][entry][modification]['misc modifiers'] += race_data['traits'][trait][entry][modification]
@@ -699,8 +812,146 @@ class MyClient(discord.Client):
 			else:
 				await message.channel.send('Under construction!')
 		
-		
-		
-#Initialize bot
+	#---------------------------#
+	#---  Reaction Handling  ---#
+	#---------------------------#
+	async def on_raw_reaction_add(self, payload):
+		emoji = payload.emoji
+		# Check emote
+		if emoji.name != DIE_EMOTE:
+			return
+
+		get_msg = self.get_channel(payload.channel_id).fetch_message(payload.message_id)
+		msg = await get_msg
+		user = msg.author.id
+	
+		rolls = []
+		# if user reacted to own post
+		if user == payload.user_id:
+			#handle rolls
+			player_rolls = extract_rolls(msg.content)
+			await self.logMessage('@===@ ROLLS', player_rolls)
+			await self.react_rolls(msg, player_rolls)
+			return
+		# if GM reacted to post
+		elif payload.user_id == GAMEMASTER:
+			reacts = msg.reactions
+			for react in reacts:
+				if react.emoji in EMOTE_MAP:
+					raw_users = await react.users().flatten()
+					users = []
+					for raw in raw_users:
+						users.append(raw.id)
+					if GAMEMASTER in users:
+						rolls.append(EMOTE_MAP[react.emoji])
+
+		roll_string = ''
+		for r in rolls:
+			roll_string += (', '+r.capitalize()) if roll_string != '' else r.capitalize() 
+		if user in session_data and PERSONAL_CHANNEL in session_data[user]:
+			user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
+			embed = discord.Embed(
+				title = 'Post',
+				type = 'rich',
+				url = msg.jump_url
+			)
+			embed.add_field(
+				name='The GM requests the following rolls...', 
+				value='{' + roll_string + '}', inline=True
+			)
+			embed.add_field(
+				name='To perform these rolls...', 
+				value='1. Edit your message (click `Post` above)\n2. Add a new line to the end (hold `shift` and press `enter`)\n'+
+					'3. Add '+DIE_EMOTE+', the name of the roll, and then your roll\n'+
+					'Format: '+DIE_EMOTE+' {name of roll} r {dice} + {modifiiers}\n'
+					'(Example: '+DIE_EMOTE+' Str r d20 + 2)\n'+
+					'4. Repeat steps `2-3` for each roll requested above\n'+
+					'5. When finished, react to your own message with '+DIE_EMOTE, 
+				inline=False
+			)
+			await user_channel.send(embed=embed)
+	
+	async def react_rolls(self, msg, rolls):
+		try:
+			content = ''
+			cleansed_rolls = {}
+			for r in rolls:
+				unpacked = r.split()
+				raw_roll = ''
+				for x in unpacked[1:]:
+					raw_roll += x if raw_roll == '' else ' '+x
+				cleansed_rolls[unpacked[0]] = roll_dice(raw_roll, self.rng)
+			for name,r in cleansed_rolls.items():
+				total = 0
+				message_text = ''
+				for roll in r:
+					if len(roll) > 2:
+						if roll[0]:
+							temp_text = f'[{roll[1]} ='
+							temp_total = 0
+							for x in range(len(roll) - 3):
+								total += roll[x+3]
+								temp_total += roll[x+3]
+								if roll[x+3] == roll[2] or roll[x+3] == 1:
+									temp_text = temp_text + f'  ***{roll[x+3]}***'
+								else:
+									temp_text = temp_text + f'  *{roll[x+3]}*'
+							temp_text = f' **+ {temp_total}** ' + temp_text + ']'
+							message_text = message_text + temp_text
+						else:
+							temp_text = f'[{roll[1]} ='
+							temp_total = 0
+							for x in range(len(roll) - 3):
+								total -= roll[x+3]
+								temp_total += roll[x+3]
+								if roll[x+3] == roll[2] or roll[x+3] == 1:
+									temp_text = temp_text + f'  ***{roll[x+3]}***'
+								else:
+									temp_text = temp_text + f'  *{roll[x+3]}*'
+							temp_text = f' **- {temp_total}** ' + temp_text + ']'
+							message_text = message_text + temp_text
+					elif len(roll) == 2:
+						if roll[0]: 
+							total += roll[1]
+							message_text = message_text + f' **+ {roll[1]}**'
+						else: 
+							total -= roll[1]
+							message_text = message_text + f' **- {roll[1]}**'
+				message_text = f'**{total}** ||= (' + message_text + ')||'
+				content += name.capitalize()+': '+message_text +'\n'
+			content = '**'+msg.author.display_name+'** rolled:\n' + content
+			embed = discord.Embed(
+				title='Rolls for post by '+msg.author.display_name,
+				type='rich',
+				url=msg.jump_url,
+			)
+			embed.add_field(
+				name='Post preview', 
+				value=(msg.content if len(msg.content) < 100 else msg.content[:100]+'...'),
+				inline=False
+			)
+			await self.roll_channel.send(content=content, embed=embed)
+		except Exception as e:
+			user = msg.author.id
+			if user in session_data and PERSONAL_CHANNEL in session_data[user]:
+				user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
+				embed = discord.Embed(
+					title = 'Post',
+					type = 'rich',
+					rl = msg.jump_url
+				)
+				embed.add_field(
+					name='Your roll was not valid',
+					value='Please re-edit your message and redo the roll.\n'+
+					'Remember to follow the format:\n'+
+					DIE_EMOTE+' {name of roll} r {dice} + {modifiiers}\n'+
+					'When you are ready to re-roll, redo your '+DIE_EMOTE+' reaction on your message.'
+				)
+				await user_channel.send(embed=embed)
+
+
+##################
+# Initialize bot #
+##################
 client = MyClient(intents=discord.Intents.all())
 client.run(os.environ.get('TOKEN'))
