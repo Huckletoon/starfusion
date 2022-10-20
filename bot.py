@@ -24,6 +24,9 @@ from packages.squirrel3 import squirrel3
 #############
 # CONSTANTS #
 #############
+logging.basicConfig(filename='output.log', encoding='utf-8', level=logging.INFO)
+log = logging.getLogger()
+
 BLANK = '<:blank:894263650825670698>'
 BLANK_ID = 894263650825670698
 GAMEMASTER = 187346007837638657
@@ -162,9 +165,9 @@ def save_session_data():
 			user_file = open(user_file_name, 'w')
 			user_file.write(data)
 			user_file.close()
-			print(f'User data {user_file_name} saved successfully!')
+			log.info(f'User data {user_file_name} saved successfully!')
 		except Exception as e:
-			print(f'ERROR: User data {user_file_name} failed to save: {e}')
+			log.info(f'ERROR: User data {user_file_name} failed to save: {e}')
 
 def load_session_data():
 	user_files = os.listdir(user_data_dir)
@@ -175,13 +178,13 @@ def load_session_data():
 			user_file = open(user_file_name, 'r')
 			session_data[int(user_id)] = json.loads(user_file.read())
 			user_file.close()
-			print(f'User data {user_data_dir+file} loaded successfully!')
+			log.info(f'User data {user_data_dir+file} loaded successfully!')
 		except Exception as e:
-			print(f'ERROR: User data {user_file_name} failed to load: {e}')
+			log.info(f'ERROR: User data {user_file_name} failed to load: {e}')
 
 async def init_session_data(guilds):
 	for guild in guilds:
-		print('Logged into guildID: {0}'.format(guild.id))
+		log.info('Logged into guildID: {0}'.format(guild.id))
 		async for member in guild.fetch_members():
 			if member.id not in session_data:
 				session_data[member.id] = dict()
@@ -310,6 +313,7 @@ class MyClient(discord.Client):
 	#---  Logging  ---#
 	#-----------------#
 	async def logMessage(self, message):
+		log.info(message)
 		await self.log_channel.send(message)
 
 	#----------------------------------#
@@ -404,7 +408,7 @@ class MyClient(discord.Client):
 			builder += "\n**Additional Choices**\n========================================\n"
 			for choice in self.races[race]['choices']:
 				for option in self.races[race]['choices'][choice]:
-					print(f'choice: {choice}\n|--option: {option}')
+					log.info(f'choice: {choice}\n|--option: {option}')
 					builder += f"**{string.capwords(option)}**\n{self.races[race]['choices'][choice][option]['description']}\n"
 					if len(builder) >= MSG_CHAR_THRESHOLD:
 						messages.append(builder)
@@ -494,8 +498,8 @@ class MyClient(discord.Client):
 	#---  On Ready  ---#
 	#------------------#
 	async def on_ready(self):
-		print('Logged on as {0}!'.format(self.user))
-		print('Self ID: {0}'.format(self.user.id))
+		log.info('Logged on as {0}!'.format(self.user))
+		log.info('Self ID: {0}'.format(self.user.id))
 		self.roll_channel = await self.fetch_channel(ROLL_CHANNEL)
 		self.log_channel = await self.fetch_channel(LOG_CHANNEL)
 		
@@ -816,60 +820,63 @@ class MyClient(discord.Client):
 	#---  Reaction Handling  ---#
 	#---------------------------#
 	async def on_raw_reaction_add(self, payload):
-		emoji = payload.emoji
-		# Check emote
-		if emoji.name != DIE_EMOTE:
-			return
+		try:
+			emoji = payload.emoji
+			# Check emote
+			if emoji.name != DIE_EMOTE:
+				return
 
-		get_msg = self.get_channel(payload.channel_id).fetch_message(payload.message_id)
-		msg = await get_msg
-		user = msg.author.id
-	
-		rolls = []
-		# if user reacted to own post
-		if user == payload.user_id:
-			#handle rolls
-			player_rolls = extract_rolls(msg.content)
-			await self.logMessage('@===@ ROLLS', player_rolls)
-			await self.react_rolls(msg, player_rolls)
-			return
-		# if GM reacted to post
-		elif payload.user_id == GAMEMASTER:
-			reacts = msg.reactions
-			for react in reacts:
-				if react.emoji in EMOTE_MAP:
-					raw_users = await react.users().flatten()
-					users = []
-					for raw in raw_users:
-						users.append(raw.id)
-					if GAMEMASTER in users:
-						rolls.append(EMOTE_MAP[react.emoji])
+			get_msg = self.get_channel(payload.channel_id).fetch_message(payload.message_id)
+			msg = await get_msg
+			user = msg.author.id
+		
+			rolls = []
+			# if user reacted to own post
+			if user == payload.user_id:
+				#handle rolls
+				player_rolls = extract_rolls(msg.content)
+				await self.logMessage('@===@ ROLLS', player_rolls)
+				await self.react_rolls(msg, player_rolls)
+				return
+			# if GM reacted to post
+			elif payload.user_id == GAMEMASTER:
+				reacts = msg.reactions
+				for react in reacts:
+					if react.emoji in EMOTE_MAP:
+						raw_users = await react.users().flatten()
+						users = []
+						for raw in raw_users:
+							users.append(raw.id)
+						if GAMEMASTER in users:
+							rolls.append(EMOTE_MAP[react.emoji])
 
-		roll_string = ''
-		for r in rolls:
-			roll_string += (', '+r.capitalize()) if roll_string != '' else r.capitalize() 
-		if user in session_data and PERSONAL_CHANNEL in session_data[user]:
-			user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
-			embed = discord.Embed(
-				title = 'Post',
-				type = 'rich',
-				url = msg.jump_url
-			)
-			embed.add_field(
-				name='The GM requests the following rolls...', 
-				value='{' + roll_string + '}', inline=True
-			)
-			embed.add_field(
-				name='To perform these rolls...', 
-				value='1. Edit your message (click `Post` above)\n2. Add a new line to the end (hold `shift` and press `enter`)\n'+
-					'3. Add '+DIE_EMOTE+', the name of the roll, and then your roll\n'+
-					'Format: '+DIE_EMOTE+' {name of roll} r {dice} + {modifiiers}\n'
-					'(Example: '+DIE_EMOTE+' Str r d20 + 2)\n'+
-					'4. Repeat steps `2-3` for each roll requested above\n'+
-					'5. When finished, react to your own message with '+DIE_EMOTE, 
-				inline=False
-			)
-			await user_channel.send(embed=embed)
+			roll_string = ''
+			for r in rolls:
+				roll_string += (', '+r.capitalize()) if roll_string != '' else r.capitalize() 
+			if user in session_data and PERSONAL_CHANNEL in session_data[user]:
+				user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
+				embed = discord.Embed(
+					title = 'Post',
+					type = 'rich',
+					url = msg.jump_url
+				)
+				embed.add_field(
+					name='The GM requests the following rolls...', 
+					value='{' + roll_string + '}', inline=True
+				)
+				embed.add_field(
+					name='To perform these rolls...', 
+					value='1. Edit your message (click `Post` above)\n2. Add a new line to the end (hold `shift` and press `enter`)\n'+
+						'3. Add '+DIE_EMOTE+', the name of the roll, and then your roll\n'+
+						'Format: '+DIE_EMOTE+' {name of roll} r {dice} + {modifiiers}\n'
+						'(Example: '+DIE_EMOTE+' Str r d20 + 2)\n'+
+						'4. Repeat steps `2-3` for each roll requested above\n'+
+						'5. When finished, react to your own message with '+DIE_EMOTE, 
+					inline=False
+				)
+				await user_channel.send(embed=embed)
+		except Exception as e:
+			self.logMessage(f"{payload} failed: {e}")
 	
 	async def react_rolls(self, msg, rolls):
 		try:
@@ -932,6 +939,7 @@ class MyClient(discord.Client):
 			)
 			await self.roll_channel.send(content=content, embed=embed)
 		except Exception as e:
+			self.logMessage(f"{msg} failed: {e}")
 			user = msg.author.id
 			if user in session_data and PERSONAL_CHANNEL in session_data[user]:
 				user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
