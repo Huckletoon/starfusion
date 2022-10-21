@@ -835,7 +835,7 @@ class MyClient(discord.Client):
 			if user == payload.user_id:
 				#handle rolls
 				player_rolls = extract_rolls(msg.content)
-				await self.logMessage('@===@ ROLLS', player_rolls)
+				await self.logMessage(f'@===@ ROLLS: , {player_rolls}')
 				await self.react_rolls(msg, player_rolls)
 				return
 			# if GM reacted to post
