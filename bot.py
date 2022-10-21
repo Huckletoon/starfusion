@@ -876,7 +876,7 @@ class MyClient(discord.Client):
 				)
 				await user_channel.send(embed=embed)
 		except Exception as e:
-			self.logMessage(f"{payload} failed: {e}")
+			await self.logMessage(f"{payload} failed: {e}")
 	
 	async def react_rolls(self, msg, rolls):
 		try:
@@ -939,7 +939,7 @@ class MyClient(discord.Client):
 			)
 			await self.roll_channel.send(content=content, embed=embed)
 		except Exception as e:
-			self.logMessage(f"{msg} failed: {e}")
+			await self.logMessage(f"{msg} failed: {e}")
 			user = msg.author.id
 			if user in session_data and PERSONAL_CHANNEL in session_data[user]:
 				user_channel = self.get_channel(session_data[user][PERSONAL_CHANNEL])
