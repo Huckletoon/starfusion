@@ -2,7 +2,7 @@
 # IMPORTS #
 ###########
 from email import message
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import asyncio
 import datetime
 import discord
@@ -30,8 +30,8 @@ log = logging.getLogger()
 BLANK = '<:blank:894263650825670698>'
 BLANK_ID = 894263650825670698
 GAMEMASTER = 187346007837638657
-ROLL_CHANNEL = 864933210265616404
-LOG_CHANNEL = 1015611632136753274
+ROLL_CHANNEL = 1230710847387471882
+LOG_CHANNEL = 1230710767808942142
 MSG_CHAR_LIMIT = 2000
 MSG_CHAR_THRESHOLD = 1500
 PERSONAL_CHANNEL = 'personal_channel'
@@ -130,7 +130,7 @@ patterns['r dy'] = re.compile(r'd\d+', re.IGNORECASE)
 patterns['+'] = re.compile(r'\+')
 patterns['-'] = re.compile(r'\-')
 patterns['numbers'] = re.compile(r'\d+')
-load_dotenv()
+# load_dotenv()
 user_data_dir = 'users/'
 session_data = {}
 
@@ -303,6 +303,13 @@ def extract_rolls(content):
 			rolls[x] = rolls[x].strip()
 		return rolls[1:]
 
+
+def oracle(rng):
+	rolls = roll_dice("r 2d6", rng)
+	yes = rolls[0][3] > 3
+	but = (yes and rolls[0][4] == 1) or (not yes and rolls[0][4] == 6)
+	nd = (yes and rolls[0][4] == 6) or (not yes and rolls[0][4] == 1)
+	return {'yes':yes,'but':but,'and':nd}
 
 #------------------------#
 #---  Discord Client  ---#
@@ -514,6 +521,7 @@ class MyClient(discord.Client):
 		self.races = json.load(open('characterCreation/races.json', 'r', encoding='utf-8'))
 		self.themes = json.load(open('characterCreation/themes.json', 'r', encoding='utf-8'))
 		self.classes = json.load(open('characterCreation/classes.json', 'r', encoding='utf-8'))
+		print('READY!')
 
 	#--------------------------#
 	#---  Command Handling  ---#
@@ -543,6 +551,17 @@ class MyClient(discord.Client):
 			return
 		if command == 'quit':
 			sys.exit()
+
+		#----------------#
+		#---  Oracle  ---# 
+		#----------------#
+		if command == 'o':
+			r = oracle(self.rng)
+			msg = 'Yes' if r['yes'] else 'No'
+			msg += ', but...' if r['but'] else ''
+			msg += ', and...' if r['and'] else '' 
+			await message.channel.send(msg)
+			return
 
 		#--------------------------------#
 		#---  List character options  ---#
